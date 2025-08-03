@@ -7,7 +7,7 @@
 // disparar o cálculo. O resultado final mostra quantos jogos tiveram 0, 1, 2,
 // ..., 6 acertos para cada concurso selecionado.
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import type { Draw } from "@/lib/historico";
 
@@ -23,6 +23,7 @@ export default function Arquivo() {
   const [concursos, setConcursos] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [results, setResults] = useState<ContestResult[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function handleCalculate() {
     if (!file || !concursos.trim()) return;
@@ -88,11 +89,19 @@ export default function Arquivo() {
         type="file"
         accept=".txt"
         onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-        className="mb-2 w-full"
+        ref={fileInputRef}
+        className="hidden"
       />
       <button
+        type="button"
+        onClick={() => fileInputRef.current?.click()}
+        className="mb-2 block mx-auto rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-700"
+      >
+        {file ? file.name : "Selecionar arquivo"}
+      </button>
+      <button
         onClick={handleCalculate}
-        className="mb-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+        className="mb-4 block mx-auto rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
       >
         Calcular
       </button>
