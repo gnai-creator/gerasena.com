@@ -20,6 +20,8 @@ export async function getHistorico(limit = 50): Promise<Draw[]> {
   return res.rows as unknown as Draw[];
 }
 
-export function analyzeHistorico(): string[] {
-  return FEATURES;
+export function analyzeHistorico(): Record<string, number> {
+  const result: Record<string, number> = {};
+  FEATURES.forEach((f) => (result[f] = 0));
+  return result;
 }

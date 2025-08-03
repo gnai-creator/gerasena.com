@@ -36,7 +36,7 @@ function fitness(_game: number[]): number {
 }
 
 export function generateGames(
-  _features: string[],
+  _features: Record<string, number>,
   populationSize = 100,
   generations = 50
 ): number[][] {
