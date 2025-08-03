@@ -15,12 +15,15 @@ export interface Draw {
 
 export async function getHistorico(
   limit = 50,
-  offset = 0
+  offset = 0,
+  before?: number
 ): Promise<Draw[]> {
   try {
     const res = await db.execute({
-      sql: `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history ORDER BY concurso DESC LIMIT ? OFFSET ?`,
-      args: [limit, offset],
+      sql: before
+        ? `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history WHERE concurso < ? ORDER BY concurso DESC LIMIT ? OFFSET ?`
+        : `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history ORDER BY concurso DESC LIMIT ? OFFSET ?`,
+      args: before ? [before, limit, offset] : [limit, offset],
     });
     return res.rows as unknown as Draw[];
   } catch (error) {
