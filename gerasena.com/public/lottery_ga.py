@@ -245,6 +245,8 @@ def evolve(population: List[Game], desired: Dict[str, object], hist: HistoricalD
                 seen.add(child)
                 new_population.append(child)
         population = new_population
+    # Guarantee the final population has no duplicate games
+    population = list(dict.fromkeys(population))
     return population
 
 # -------------------------------------
