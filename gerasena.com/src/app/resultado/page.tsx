@@ -20,7 +20,7 @@ export default function Resultado() {
 
   function handleExport() {
     if (games.length === 0) return;
-    const content = games.map((g) => g.numbers.join(" - ")).join("\n");
+    const content = games.map((g) => g.numbers.join("-")).join("\n");
     const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
