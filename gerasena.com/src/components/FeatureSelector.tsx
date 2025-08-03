@@ -27,7 +27,7 @@ export function FeatureSelector({ features, selected, onToggle, onChange }: Prop
           <button
             type="button"
             title={FEATURE_INFO[f].description}
-            className="h-4 w-4 rounded-full bg-gray-200 text-xs"
+            className="h-4 w-4 rounded-full bg-gray-200 text-xs text-black"
           >
             i
           </button>
