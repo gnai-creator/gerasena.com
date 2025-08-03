@@ -31,6 +31,13 @@ export default function Manual() {
     } else {
       const games = generateGames(selected);
       const evaluated = evaluateGames(games);
+      evaluated.forEach((g) => {
+        fetch("/api/generated", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ numbers: g.numbers }),
+        });
+      });
       sessionStorage.setItem("results", JSON.stringify(evaluated));
       router.push("/resultado");
     }

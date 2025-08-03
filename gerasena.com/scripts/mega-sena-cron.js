@@ -2,9 +2,15 @@ const cron = require('node-cron');
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const { createClient } = require('@libsql/client');
 
 const CSV_PATH = path.join(__dirname, '..', 'public', 'mega-sena.csv');
 const API_BASE = 'https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena';
+
+const db = createClient({
+  url: process.env.TURSO_DATABASE_URL,
+  authToken: process.env.TURSO_AUTH_TOKEN,
+});
 
 function fetchJson(url) {
   const output = execSync(`curl -s ${url}`, { encoding: 'utf8' });
@@ -21,7 +27,14 @@ function fetchConcurso(numero) {
   return fetchJson(`${API_BASE}/${numero}`);
 }
 
-function updateMegaSena() {
+async function insertDraw(draw) {
+  await db.execute({
+    sql: `INSERT OR IGNORE INTO history (concurso, data, bola1, bola2, bola3, bola4, bola5, bola6) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    args: [draw.numero, draw.dataApuracao, ...draw.listaDezenas],
+  });
+}
+
+async function updateMegaSena() {
   try {
     const last = getLastConcurso();
     const latest = fetchJson(API_BASE);
@@ -31,6 +44,7 @@ function updateMegaSena() {
       const draw = fetchConcurso(n);
       const line = `${String(draw.numero).padStart(4, '0')},${draw.dataApuracao},${draw.listaDezenas.join(',')}\n`;
       fs.appendFileSync(CSV_PATH, line);
+      await insertDraw(draw);
       console.log(`Concurso ${draw.numero} adicionado`);
     }
   } catch (err) {
