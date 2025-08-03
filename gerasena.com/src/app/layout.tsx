@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import ServiceWorker from "../components/ServiceWorker";
 import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 import "./globals.css";
 
@@ -76,6 +77,7 @@ export default function RootLayout({
         {children}
         <ServiceWorker />
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
