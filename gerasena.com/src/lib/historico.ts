@@ -239,7 +239,7 @@ export async function analyzeHistorico(
   model.add(tf.layers.dense({ units: 1, activation: "sigmoid" })); // ou linear, dependendo do objetivo
   
   model.compile({
-    loss: "meanSquaredError", // ou "binaryCrossentropy" se for classificação
+    loss: "binaryCrossentropy", // ou "binaryCrossentropy" se for classificação
     optimizer: tf.train.adam(0.001),
   });
   
