@@ -88,7 +88,7 @@ export default function Arquivo() {
       {results.map((r) => (
         <div key={r.concurso} className="mb-4">
           <h3 className="font-semibold">Concurso {r.concurso}</h3>
-          <table className="mx-auto mt-2 text-sm">
+          <table className="mx-auto mt-2 text-sm ">
             <thead>
               <tr>
                 <th className="px-2 py-1 text-left">Acertos</th>
@@ -97,7 +97,7 @@ export default function Arquivo() {
             </thead>
             <tbody>
               {r.counts.map((c, i) => (
-                <tr key={i} className="odd:bg-gray-100">
+                <tr key={i} className="odd:bg-gray-100 text-green-600">
                   <td className="px-2 py-1">{i}</td>
                   <td className="px-2 py-1">{c}</td>
                 </tr>
