@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FEATURES } from "@/lib/features";
 import { FeatureSelector } from "@/components/FeatureSelector";
 import { generateGames } from "@/lib/genetic";
@@ -17,6 +17,9 @@ export default function Manual() {
   const [step, setStep] = useState(0);
   const [selected, setSelected] = useState<Record<string, number | [number, number]>>({});
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const concursoParam = searchParams.get("concurso");
+  const baseConcurso = concursoParam ? parseInt(concursoParam, 10) : undefined;
 
   const toggle = (f: string) => {
     setSelected((prev) => {
@@ -39,7 +42,9 @@ export default function Manual() {
       setStep(step + 1);
     } else {
       const games = generateGames(selected);
-      const res = await fetch("/api/historico");
+      const res = await fetch(
+        `/api/historico?limit=50${baseConcurso ? `&before=${baseConcurso}` : ""}`
+      );
       const draws: Draw[] = await res.json();
       const history = draws.map((d) => [
         d.bola1,
