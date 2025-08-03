@@ -2,8 +2,8 @@
   "version": 2,
   "crons": [
     {
-      "path": "/api/cron",
-      "schedule": "* * * * *"
+      "path": "/api/scrap",
+      "schedule": "0 0 * * *"
     }
   ]
 }
