@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import ServiceWorker from "../components/ServiceWorker";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,8 +14,53 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gerasena",
+  metadataBase: new URL("https://gerasena.com"),
+  title: {
+    default: "Gerasena",
+    template: "%s | Gerasena",
+  },
   description: "Gere Jogos da Mega-Sena",
+  keywords: ["mega-sena", "loteria", "gerador", "jogos", "sorteio"],
+  authors: [{ name: "Gerasena" }],
+  applicationName: "Gerasena",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/globe.svg",
+    apple: "/globe.svg",
+  },
+  openGraph: {
+    title: "Gerasena",
+    description: "Gere Jogos da Mega-Sena",
+    url: "https://gerasena.com",
+    siteName: "Gerasena",
+    locale: "pt_BR",
+    type: "website",
+    images: ["/globe.svg"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Gerasena",
+    description: "Gere Jogos da Mega-Sena",
+    images: ["/globe.svg"],
+  },
+  alternates: {
+    canonical: "https://gerasena.com",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  appleWebApp: {
+    capable: true,
+    title: "Gerasena",
+    statusBarStyle: "default",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#317EFB",
 };
 
 export default function RootLayout({
@@ -23,11 +69,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang="pt-BR">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
+        <ServiceWorker />
       </body>
     </html>
   );

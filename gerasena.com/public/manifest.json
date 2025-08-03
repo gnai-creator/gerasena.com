@@ -1,0 +1,16 @@
+{
+  "name": "Gerasena",
+  "short_name": "Gerasena",
+  "description": "Gere Jogos da Mega-Sena",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#317EFB",
+  "icons": [
+    {
+      "src": "/globe.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
