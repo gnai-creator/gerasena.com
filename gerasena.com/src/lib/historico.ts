@@ -228,22 +228,21 @@ export async function analyzeHistorico(
   const xs = tf.tensor2d(featureVectors.slice(0, -1));
   const ys = tf.tensor2d(featureVectors.slice(1));
   const model = tf.sequential();
-  model.add(
-    tf.layers.dense({ inputShape: [FEATURES.length], units: 32, activation: "relu" })
-  );
+  model.add(tf.layers.dense({ inputShape: [FEATURES.length], units: 64, activation: "relu" }));
+  model.add(tf.layers.dropout({ rate: 0.2 }));
+  
+  model.add(tf.layers.dense({ units: 128, activation: "relu" }));
+  model.add(tf.layers.dropout({ rate: 0.2 }));
   
   model.add(tf.layers.dense({ units: 64, activation: "relu" }));
-  model.add(tf.layers.dense({ units: 128, activation: "relu" }));
-  model.add(tf.layers.dense({ units: 256, activation: "relu" }));
-  model.add(tf.layers.dense({ units: 512, activation: "relu" }));
-  model.add(tf.layers.dense({ units: 1024, activation: "relu" }));
-  model.add(tf.layers.dense({ units: 512, activation: "relu" }));
-  model.add(tf.layers.dense({ units: 256, activation: "relu" }));
-  model.add(tf.layers.dense({ units: 128, activation: "relu" }));
-  model.add(tf.layers.dense({ units: 64, activation: "relu" }));
-  model.add(tf.layers.dense({ units: 32, activation: "relu" }));
-  model.add(tf.layers.dense({ units: FEATURES.length }));
-  model.compile({ loss: "meanSquaredError", optimizer: tf.train.adam(0.001) });
+  
+  model.add(tf.layers.dense({ units: 1, activation: "sigmoid" })); // ou linear, dependendo do objetivo
+  
+  model.compile({
+    loss: "meanSquaredError", // ou "binaryCrossentropy" se for classificação
+    optimizer: tf.train.adam(0.001),
+  });
+  
   await model.fit(xs, ys, { epochs: 200, verbose: 0 });
   const last = tf.tensor2d([featureVectors[featureVectors.length - 1]]);
   const prediction = model.predict(last) as tfTypes.Tensor;
