@@ -11,7 +11,7 @@ export function GameCard({ numbers, score }: Props) {
       <div className="mb-2 grid grid-cols-6 gap-2 text-center font-mono">
         {numbers.map((n) => (
           <span key={n} className="rounded bg-gray-200 p-1">
-            {n}
+            <p className="text-xs text-black">{n}</p>
           </span>
         ))}
       </div>
