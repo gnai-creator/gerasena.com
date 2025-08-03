@@ -14,6 +14,7 @@ import type { Draw } from "@/lib/historico";
 interface ContestResult {
   concurso: number;
   counts: number[]; // index represents number of hits
+  hasSena: boolean;
 }
 
 export default function Arquivo() {
@@ -39,6 +40,11 @@ export default function Arquivo() {
       .map((c) => parseInt(c.trim(), 10))
       .filter((n) => !isNaN(n));
 
+    const allNums = new Set<number>();
+    for (const g of games) {
+      for (const n of g) allNums.add(n);
+    }
+
     const resArr: ContestResult[] = [];
     for (const concurso of concursoNums) {
       const resp = await fetch(`/api/historico?limit=1&before=${concurso + 1}`);
@@ -58,7 +64,8 @@ export default function Arquivo() {
         const hits = g.filter((n) => drawNums.includes(n)).length;
         counts[hits]++;
       }
-      resArr.push({ concurso, counts });
+      const hasSena = drawNums.every((n) => allNums.has(n));
+      resArr.push({ concurso, counts, hasSena });
     }
     setResults(resArr);
   }
@@ -104,6 +111,11 @@ export default function Arquivo() {
               ))}
             </tbody>
           </table>
+          <p className="mt-2 text-sm">
+            {r.hasSena
+              ? "As dezenas do concurso estão presentes nos números do arquivo."
+              : "As dezenas do concurso não aparecem todas nos números do arquivo."}
+          </p>
         </div>
       ))}
       <br />
