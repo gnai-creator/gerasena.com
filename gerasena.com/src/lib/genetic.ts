@@ -2,13 +2,18 @@ function rand(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function uniqueGame(nums: number[]): number[] {
+  return Array.from(new Set(nums))
+    .sort((a, b) => a - b)
+    .slice(0, 6);
+}
+
 function randomGame(): number[] {
-  const nums: number[] = [];
-  while (nums.length < 6) {
-    const n = rand(1, 60);
-    if (!nums.includes(n)) nums.push(n);
+  const set = new Set<number>();
+  while (set.size < 6) {
+    set.add(rand(1, 60));
   }
-  return nums.sort((a, b) => a - b);
+  return uniqueGame(Array.from(set));
 }
 
 function crossover(a: number[], b: number[]): number[] {
@@ -16,9 +21,7 @@ function crossover(a: number[], b: number[]): number[] {
   while (set.size < 6) {
     set.add(rand(1, 60));
   }
-  return Array.from(set)
-    .sort((x, y) => x - y)
-    .slice(0, 6);
+  return uniqueGame(Array.from(set));
 }
 
 function mutate(game: number[]) {
@@ -27,7 +30,8 @@ function mutate(game: number[]) {
     let n = rand(1, 60);
     while (game.includes(n)) n = rand(1, 60);
     game[idx] = n;
-    game.sort((a, b) => a - b);
+    const unique = uniqueGame(game);
+    game.splice(0, game.length, ...unique);
   }
 }
 
@@ -88,5 +92,5 @@ export function generateGames(
     population.push(...survivors);
   }
 
-  return population;
+  return Array.from(new Map(population.map((g) => [gameKey(g), g])).values());
 }
