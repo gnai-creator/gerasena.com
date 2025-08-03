@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@libsql/client": "^0.15.10",
     "@tensorflow/tfjs": "^4.22.0",
     "lodash": "^4.17.21",
     "next": "15.4.5",
