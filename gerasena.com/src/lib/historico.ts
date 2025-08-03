@@ -125,8 +125,10 @@ function computeFeatures(
   ];
 }
 
-export async function analyzeHistorico(): Promise<Record<string, number>> {
-  const result: Record<string, number> = {};
+export async function analyzeHistorico(): Promise<
+  Record<string, number | [number, number]>
+> {
+  const result: Record<string, number | [number, number]> = {};
   FEATURES.forEach((f) => (result[f] = 0));
   const historico = await getHistorico(50);
   if (historico.length < 2) return result;
@@ -159,6 +161,12 @@ export async function analyzeHistorico(): Promise<Record<string, number>> {
     prevDraw = nums;
   }
 
+  const sums = featureVectors.map((v) => v[0]);
+  const sumRange: [number, number] = [
+    Math.min(...sums),
+    Math.max(...sums),
+  ];
+
   const xs = tf.tensor2d(featureVectors.slice(0, -1));
   const ys = tf.tensor2d(featureVectors.slice(1));
   const model = tf.sequential();
@@ -179,6 +187,7 @@ export async function analyzeHistorico(): Promise<Record<string, number>> {
   FEATURES.forEach((f, i) => {
     result[f] = values[i];
   });
+  result.sum = sumRange;
 
   tf.dispose([xs, ys, last, prediction]);
   return result;
