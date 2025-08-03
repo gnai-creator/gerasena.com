@@ -33,6 +33,12 @@ export default function Home() {
         >
           Estatísticas
         </Link>
+        <Link
+          href="https://github.com/gnai-creator/gerasena.com"
+          className="rounded bg-gray-600 px-4 py-2 text-white text-center hover:bg-gray-700"
+        >
+          Código Fonte
+        </Link>
       </div>
     </main>
   );
