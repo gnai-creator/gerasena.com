@@ -16,13 +16,23 @@ const GROUPS = [
 
 export default function Manual() {
   const [step, setStep] = useState(0);
-  const [selected, setSelected] = useState<string[]>([]);
+  const [selected, setSelected] = useState<Record<string, number>>({});
   const router = useRouter();
 
   const toggle = (f: string) => {
-    setSelected((prev) =>
-      prev.includes(f) ? prev.filter((p) => p !== f) : [...prev, f]
-    );
+    setSelected((prev) => {
+      const next = { ...prev };
+      if (f in next) {
+        delete next[f];
+      } else {
+        next[f] = 0;
+      }
+      return next;
+    });
+  };
+
+  const setValue = (f: string, value: number) => {
+    setSelected((prev) => ({ ...prev, [f]: value }));
   };
 
   const next = async () => {
@@ -50,6 +60,7 @@ export default function Manual() {
         features={GROUPS[step]}
         selected={selected}
         onToggle={toggle}
+        onChange={setValue}
       />
       <button
         onClick={next}
