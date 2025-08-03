@@ -25,8 +25,8 @@ export const metadata: Metadata = {
   applicationName: "Gerasena",
   manifest: "/manifest.json",
   icons: {
-    icon: "/globe.svg",
-    apple: "/globe.svg",
+    icon: "/logo.png",
+    apple: "/logo.png",
   },
   openGraph: {
     title: "Gerasena",
@@ -35,13 +35,13 @@ export const metadata: Metadata = {
     siteName: "Gerasena",
     locale: "pt_BR",
     type: "website",
-    images: ["/globe.svg"],
+    images: ["/logo.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Gerasena",
     description: "Gere Jogos da Mega-Sena",
-    images: ["/globe.svg"],
+    images: ["/logo.png"],
   },
   alternates: {
     canonical: "https://gerasena.com",
