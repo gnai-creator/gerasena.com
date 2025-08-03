@@ -12,11 +12,17 @@ function evaluateGame(
 ): number {
   const tensor = tf.tensor1d(numbers);
   const sum = tensor.sum().arraySync() as number;
+  const mean = sum / numbers.length;
+  const std = tf
+    .tidy(() => tensor.sub(mean).square().mean().sqrt().arraySync()) as number;
   tensor.dispose();
+
   const avgFreq =
     numbers.reduce((acc, n) => acc + freq[n - 1], 0) / numbers.length;
   const rarity = historyLength ? 1 - avgFreq / historyLength : 1;
-  return (sum / (60 * 6)) * rarity;
+  const distribution = std / 20; // normalize typical spread
+
+  return (sum / (60 * 6)) * rarity * distribution;
 }
 
 export function evaluateGames(
