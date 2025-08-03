@@ -10,7 +10,6 @@ export default function Home() {
       <Image src="/logo.png" alt="Gerasena" width={100} height={100} />
       <h1 className="text-2xl font-bold">Gerasena</h1>
       <h1 className="text-2xl font-bold">Gere Jogos da Mega-Sena</h1>
-      <input type="text" placeholder="Digite o sorteio que deseja os palpites" />
       <div className="flex gap-4 flex-col">
         <input
           type="number"
