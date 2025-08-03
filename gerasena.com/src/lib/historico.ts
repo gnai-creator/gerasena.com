@@ -103,6 +103,56 @@ function computeFeatures(
   sorted.forEach((n) => tensGroupCounts[Math.floor((n - 1) / 10)]++);
   const tensGroupStd = std(tensGroupCounts);
 
+  const numSet = new Set(sorted);
+  let mirrorCount = 0;
+  numSet.forEach((n) => {
+    const mirror = parseInt(
+      n.toString().padStart(2, "0").split("").reverse().join(""),
+      10
+    );
+    if (mirror !== n && mirror <= 60 && numSet.has(mirror) && n < mirror) {
+      mirrorCount++;
+    }
+  });
+
+  const sumOddPositions = sorted
+    .filter((_n, i) => i % 2 === 0)
+    .reduce((a, b) => a + b, 0);
+  const sumEvenPositions = sorted
+    .filter((_n, i) => i % 2 === 1)
+    .reduce((a, b) => a + b, 0);
+
+  const freqPairs = histFreq.map((freq, i) => ({ num: i + 1, freq }));
+  const hotNumbers = new Set(
+    [...freqPairs]
+      .sort((a, b) => b.freq - a.freq || a.num - b.num)
+      .slice(0, 10)
+      .map((p) => p.num)
+  );
+  const coldNumbers = new Set(
+    [...freqPairs]
+      .sort((a, b) => a.freq - b.freq || a.num - b.num)
+      .slice(0, 10)
+      .map((p) => p.num)
+  );
+  let hotSum = 0,
+    hotCount = 0,
+    coldSum = 0,
+    coldCount = 0;
+  sorted.forEach((n) => {
+    if (hotNumbers.has(n)) {
+      hotSum += histFreq[n - 1];
+      hotCount++;
+    }
+    if (coldNumbers.has(n)) {
+      coldSum += histFreq[n - 1];
+      coldCount++;
+    }
+  });
+  const hotAvg = hotCount ? hotSum / hotCount : 0;
+  const coldAvg = coldCount ? coldSum / coldCount : 0;
+  const hotColdBalance = hotAvg - coldAvg;
+
   return [
     sum,
     mean,
@@ -125,6 +175,10 @@ function computeFeatures(
     lastDigitStd,
     avgHistPos,
     tensGroupStd,
+    mirrorCount,
+    sumOddPositions,
+    sumEvenPositions,
+    hotColdBalance,
   ];
 }
 

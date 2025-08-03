@@ -20,6 +20,10 @@ export const FEATURES = [
   "last_digit_counts",
   "avg_hist_position",
   "tens_group_counts",
+  "mirror_numbers",
+  "sum_odd_positions",
+  "sum_even_positions",
+  "hot_cold_balance",
 ];
 
 export const FEATURE_INFO: Record<
@@ -110,5 +114,22 @@ export const FEATURE_INFO: Record<
   tens_group_counts: {
     label: "Grupos de dezena",
     description: "Distribuição por grupos de dezena.",
+  },
+  mirror_numbers: {
+    label: "Números espelhados",
+    description: "Quantidade de pares espelhados no jogo, como 12 e 21.",
+  },
+  sum_odd_positions: {
+    label: "Soma posições ímpares",
+    description: "Soma dos números que ocupam posições ímpares no jogo.",
+  },
+  sum_even_positions: {
+    label: "Soma posições pares",
+    description: "Soma dos números que ocupam posições pares no jogo.",
+  },
+  hot_cold_balance: {
+    label: "Balanceamento quente/frio",
+    description:
+      "Diferença entre a média de frequência dos números quentes e frios, com base no histórico.",
   },
 };
