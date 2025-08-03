@@ -3,7 +3,8 @@ function rand(min: number, max: number): number {
 }
 
 function uniqueGame(nums: number[]): number[] {
-  return Array.from(new Set(nums))
+  return nums
+    .filter((n, i) => nums.indexOf(n) === i)
     .sort((a, b) => a - b)
     .slice(0, 6);
 }
@@ -51,7 +52,10 @@ export function generateGames(
   const sumRange = Array.isArray(_features.sum) ? _features.sum : null;
   const population: number[][] = [];
   const seen = new Set<string>();
-  while (population.length < populationSize) {
+  let attempts = 0;
+  const maxAttempts = populationSize * 10;
+  while (population.length < populationSize && attempts < maxAttempts) {
+    attempts++;
     const game = randomGame();
     const sum = game.reduce((a, b) => a + b, 0);
     if (sumRange && (sum < sumRange[0] || sum > sumRange[1])) continue;
@@ -79,7 +83,11 @@ export function generateGames(
       if (survivors.length >= populationSize / 2) break;
     }
 
-    while (survivors.length < populationSize) {
+    let childAttempts = 0;
+    const maxChildAttempts = populationSize * 10;
+    while (survivors.length < populationSize && childAttempts < maxChildAttempts) {
+      childAttempts++;
+      if (survivors.length === 0) break;
       const a = survivors[rand(0, survivors.length - 1)];
       const b = survivors[rand(0, survivors.length - 1)];
       const child = crossover(a, b);
@@ -97,17 +105,11 @@ export function generateGames(
     population.push(...survivors);
   }
 
-  const unique: number[][] = [];
-  const finalSeen = new Set<string>();
-  for (const g of population) {
-    const sorted = [...g].sort((a, b) => a - b);
-    const sum = sorted.reduce((acc, n) => acc + n, 0);
-    if (sumRange && (sum < sumRange[0] || sum > sumRange[1])) continue;
-    const key = sorted.join(",");
-    if (!finalSeen.has(key)) {
-      finalSeen.add(key);
-      unique.push(sorted);
-    }
-  }
-  return unique;
+  const games = population.map((g) => [...g].sort((a, b) => a - b));
+  return games.filter((game, index, arr) => {
+    const sum = game.reduce((acc, n) => acc + n, 0);
+    if (sumRange && (sum < sumRange[0] || sum > sumRange[1])) return false;
+    const key = game.join(",");
+    return arr.findIndex((g) => g.join(",") === key) === index;
+  });
 }
