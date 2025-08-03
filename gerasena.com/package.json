@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "scrape:mega-sena": "node scripts/mega-sena-cron.js",
-    "seed:turso": "node scripts/seed-turso.js"
+    "seed:turso": "node scripts/seed-turso.js",
+    "seed:history": "node scripts/populate-history.js"
   },
   "dependencies": {
     "@libsql/client": "^0.15.10",
