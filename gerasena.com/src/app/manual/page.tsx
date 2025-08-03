@@ -6,6 +6,7 @@ import { FeatureSelector } from "@/components/FeatureSelector";
 import { generateGames } from "@/lib/genetic";
 import { evaluateGames } from "@/lib/evaluator";
 import Link from "next/link";
+import type { Draw } from "@/lib/historico";
 
 const GROUPS = [
   FEATURES.slice(0, 4),
@@ -41,7 +42,17 @@ export default function Manual() {
       setStep(step + 1);
     } else {
       const games = generateGames(selected);
-      const evaluated = evaluateGames(games);
+      const res = await fetch("/api/historico");
+      const draws: Draw[] = await res.json();
+      const history = draws.map((d) => [
+        d.bola1,
+        d.bola2,
+        d.bola3,
+        d.bola4,
+        d.bola5,
+        d.bola6,
+      ]);
+      const evaluated = evaluateGames(games, history);
       evaluated.forEach((g) => {
         fetch("/api/generated", {
           method: "POST",
