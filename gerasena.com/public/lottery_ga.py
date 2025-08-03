@@ -174,9 +174,13 @@ FEATURE_FUNCTIONS = {
 Game = Tuple[int, ...]
 
 def generate_initial_population(size: int) -> List[Game]:
-    population = []
-    for _ in range(size):
-        population.append(tuple(sorted(random.sample(range(1, 61), 6))))
+    population: List[Game] = []
+    seen = set()
+    while len(population) < size:
+        game = tuple(sorted(random.sample(range(1, 61), 6)))
+        if game not in seen:
+            seen.add(game)
+            population.append(game)
     return population
 
 def compute_features(game: Game, hist: HistoricalData) -> Dict[str, object]:
@@ -196,7 +200,15 @@ def fitness(game: Game, desired: Dict[str, object], hist: HistoricalData) -> Tup
 def select_elites(population: List[Game], desired: Dict[str, object], hist: HistoricalData, elite_size: int) -> List[Game]:
     scored = [(fitness(ind, desired, hist)[0], ind) for ind in population]
     scored.sort(key=lambda x: x[0])
-    return [ind for _, ind in scored[:elite_size]]
+    elites: List[Game] = []
+    seen = set()
+    for _, ind in scored:
+        if ind not in seen:
+            seen.add(ind)
+            elites.append(ind)
+        if len(elites) >= elite_size:
+            break
+    return elites
 
 def crossover(parent1: Game, parent2: Game) -> Game:
     pool = set(parent1) | set(parent2)
@@ -224,11 +236,14 @@ def evolve(population: List[Game], desired: Dict[str, object], hist: HistoricalD
     for _ in range(generations):
         elites = select_elites(population, desired, hist, elite_size=len(population) // 5)
         new_population = elites.copy()
+        seen = set(new_population)
         while len(new_population) < len(population):
             p1, p2 = random.sample(elites, 2)
             child = crossover(p1, p2)
             child = mutate(child)
-            new_population.append(child)
+            if child not in seen:
+                seen.add(child)
+                new_population.append(child)
         population = new_population
     return population
 
