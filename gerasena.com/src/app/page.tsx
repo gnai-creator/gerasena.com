@@ -8,7 +8,7 @@ export default function Home() {
       <Image src="/logo.png" alt="Gerasena" width={100} height={100} />
       <h1 className="text-2xl font-bold">Gerasena</h1>
       <h1 className="text-2xl font-bold">Gere Jogos da Mega-Sena</h1>
-      <div className="flex gap-4">
+      <div className="flex gap-4 flex-col">
         <Link
           href="/manual"
           className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
