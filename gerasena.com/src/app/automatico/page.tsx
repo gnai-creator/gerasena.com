@@ -12,6 +12,13 @@ export default function Automatico() {
     const features = analyzeHistorico();
     const games = generateGames(features);
     const evaluated = evaluateGames(games);
+    evaluated.forEach((g) => {
+      fetch("/api/generated", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ numbers: g.numbers }),
+      });
+    });
     sessionStorage.setItem("results", JSON.stringify(evaluated));
     router.push("/resultado");
   }, [router]);
