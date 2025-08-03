@@ -20,6 +20,18 @@ export default function Home() {
         >
           Automático
         </Link>
+        <Link
+          href="/historico"
+          className="rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-700"
+        >
+          Histórico
+        </Link>
+        <Link
+          href="/estatisticas"
+          className="rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-700"
+        >
+          Estatísticas
+        </Link>
       </div>
     </main>
   );
