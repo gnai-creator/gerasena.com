@@ -26,6 +26,7 @@ export default function Resultado() {
           <GameCard key={idx} numbers={g.numbers} score={g.score} />
         ))}
       </div>
+      <br />
       <Link href="/"
         className="rounded bg-green-600 px-4 py-2 text-white text-center hover:bg-green-700"
 
