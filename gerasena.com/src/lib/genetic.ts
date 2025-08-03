@@ -48,10 +48,13 @@ export function generateGames(
   populationSize = 100,
   generations = 50
 ): number[][] {
+  const sumRange = Array.isArray(_features.sum) ? _features.sum : null;
   const population: number[][] = [];
   const seen = new Set<string>();
   while (population.length < populationSize) {
     const game = randomGame();
+    const sum = game.reduce((a, b) => a + b, 0);
+    if (sumRange && (sum < sumRange[0] || sum > sumRange[1])) continue;
     const key = gameKey(game);
     if (!seen.has(key)) {
       seen.add(key);
@@ -81,6 +84,8 @@ export function generateGames(
       const b = survivors[rand(0, survivors.length - 1)];
       const child = crossover(a, b);
       mutate(child);
+      const sum = child.reduce((acc, n) => acc + n, 0);
+      if (sumRange && (sum < sumRange[0] || sum > sumRange[1])) continue;
       const key = gameKey(child);
       if (!survivorKeys.has(key)) {
         survivorKeys.add(key);
@@ -96,6 +101,8 @@ export function generateGames(
   const finalSeen = new Set<string>();
   for (const g of population) {
     const sorted = [...g].sort((a, b) => a - b);
+    const sum = sorted.reduce((acc, n) => acc + n, 0);
+    if (sumRange && (sum < sumRange[0] || sum > sumRange[1])) continue;
     const key = sorted.join(",");
     if (!finalSeen.has(key)) {
       finalSeen.add(key);
