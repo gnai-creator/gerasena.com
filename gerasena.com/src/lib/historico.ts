@@ -228,7 +228,10 @@ export async function analyzeHistorico(
   const xs = tf.tensor2d(featureVectors.slice(0, -1));
   const ys = tf.tensor2d(featureVectors.slice(1));
   const model = tf.sequential();
-  model.add(tf.layers.dense({ inputShape: [FEATURES.length], units: 128, activation: "relu" }));
+  model.add(tf.layers.dense({ inputShape: [FEATURES.length], units: 256, activation: "relu" }));
+  model.add(tf.layers.dropout({ rate: 0.2 }));
+  
+  model.add(tf.layers.dense({ units: 128, activation: "relu" }));
   model.add(tf.layers.dropout({ rate: 0.2 }));
   
   model.add(tf.layers.dense({ units: 64, activation: "relu" }));
