@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { analyzeHistorico } from "@/lib/historico";
+import { analyzeHistorico, type Draw } from "@/lib/historico";
 import { generateGames } from "@/lib/genetic";
 import { evaluateGames } from "@/lib/evaluator";
 
@@ -12,7 +12,17 @@ export default function Automatico() {
     async function run() {
       const features = await analyzeHistorico();
       const games = generateGames(features);
-      const evaluated = evaluateGames(games);
+      const res = await fetch("/api/historico");
+      const draws: Draw[] = await res.json();
+      const history = draws.map((d) => [
+        d.bola1,
+        d.bola2,
+        d.bola3,
+        d.bola4,
+        d.bola5,
+        d.bola6,
+      ]);
+      const evaluated = evaluateGames(games, history);
       for (const g of evaluated) {
         fetch("/api/generated", {
           method: "POST",
