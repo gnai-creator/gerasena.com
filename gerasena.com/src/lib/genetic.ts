@@ -44,7 +44,7 @@ function gameKey(game: number[]): string {
 }
 
 export function generateGames(
-  _features: Record<string, number>,
+  _features: Record<string, number | [number, number]>,
   populationSize = 100,
   generations = 50
 ): number[][] {
