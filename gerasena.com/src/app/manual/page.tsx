@@ -55,7 +55,7 @@ export default function Manual() {
   };
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col gap-4 p-4">
+    <main className="mx-auto flex min-h-screen max-w-md flex-col gap-4 p-4 text-center">
       <h2 className="text-xl font-semibold">Passo {step + 1} de {GROUPS.length}</h2>
       <FeatureSelector
         features={GROUPS[step]}
@@ -69,7 +69,10 @@ export default function Manual() {
       >
         {step < GROUPS.length - 1 ? "Próximo" : "Gerar"}
       </button>
-      <Link href="/">Voltar</Link>
+      <Link href="/"
+        className="rounded bg-green-600 px-4 py-2 text-white text-center hover:bg-green-700"
+
+      >Voltar</Link>
     </main>
   );
 }

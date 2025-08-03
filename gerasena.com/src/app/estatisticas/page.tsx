@@ -38,7 +38,7 @@ export default function Estatisticas() {
   };
 
   return (
-    <main className="mx-auto max-w-3xl p-4">
+    <main className="mx-auto max-w-3xl p-4 text-center">
       <h2 className="mb-4 text-xl font-semibold">Estatísticas</h2>
       <Bar data={data} />
       <table className="mt-4 w-full text-sm">
@@ -57,7 +57,10 @@ export default function Estatisticas() {
           ))}
         </tbody>
       </table>
-      <Link href="/">Voltar</Link>
+      <Link href="/"
+        className="rounded bg-green-600 px-4 py-2 text-white text-center hover:bg-green-700"
+
+      >Voltar</Link>
     </main>
   );
 }
