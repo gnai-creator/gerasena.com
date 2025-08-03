@@ -20,3 +20,90 @@ export const FEATURES = [
   "avg_hist_position",
   "tens_group_counts",
 ];
+
+export const FEATURE_INFO: Record<
+  string,
+  { label: string; description: string }
+> = {
+  sum: {
+    label: "Soma",
+    description: "Soma de todos os números escolhidos.",
+  },
+  mean: {
+    label: "Média",
+    description: "Média aritmética dos números escolhidos.",
+  },
+  median: {
+    label: "Mediana",
+    description: "Valor central dos números em ordem.",
+  },
+  mode_hist: {
+    label: "Moda histórica",
+    description: "Número que mais apareceu nos sorteios anteriores.",
+  },
+  range: {
+    label: "Intervalo",
+    description: "Diferença entre o maior e o menor número.",
+  },
+  std: {
+    label: "Desvio padrão",
+    description: "Medida de dispersão em relação à média.",
+  },
+  perc_even: {
+    label: "Percentual de pares",
+    description: "Porcentagem de números pares.",
+  },
+  perc_odd: {
+    label: "Percentual de ímpares",
+    description: "Porcentagem de números ímpares.",
+  },
+  prime_freq: {
+    label: "Frequência de primos",
+    description: "Quantidade de números primos.",
+  },
+  quadrant_counts: {
+    label: "Quadrantes",
+    description:
+      "Distribuição dos números pelos quadrantes do volante.",
+  },
+  sequences: {
+    label: "Sequências",
+    description: "Quantidade de números consecutivos.",
+  },
+  avg_distance: {
+    label: "Distância média",
+    description: "Distância média entre números consecutivos.",
+  },
+  min_distance: {
+    label: "Distância mínima",
+    description: "Menor distância entre números consecutivos.",
+  },
+  max_distance: {
+    label: "Distância máxima",
+    description: "Maior distância entre números consecutivos.",
+  },
+  repeat_prev: {
+    label: "Repetições",
+    description: "Quantidade de números repetidos do último concurso.",
+  },
+  avg_hist_freq: {
+    label: "Freq. histórica média",
+    description: "Média de frequência histórica dos números.",
+  },
+  sum_digits: {
+    label: "Soma dos dígitos",
+    description: "Soma dos dígitos de cada número.",
+  },
+  last_digit_counts: {
+    label: "Dígitos finais",
+    description: "Distribuição dos dígitos finais.",
+  },
+  avg_hist_position: {
+    label: "Posição histórica média",
+    description: "Média das posições históricas nos sorteios.",
+  },
+  tens_group_counts: {
+    label: "Grupos de dezena",
+    description: "Distribuição por grupos de dezena.",
+  },
+};
