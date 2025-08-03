@@ -29,7 +29,11 @@ export function evaluateGames(
   });
   const len = history.length;
 
-  return games
+  const uniqueGames = Array.from(
+    new Map(games.map((g) => [g.join(","), g])).values()
+  );
+
+  return uniqueGames
     .map((g) => ({ numbers: g, score: evaluateGame(g, freq, len) }))
     .sort((a, b) => b.score - a.score);
 }
