@@ -123,12 +123,7 @@ const file_mapping = [
   "https://loterias.caixa.gov.br/Paginas/Mega-Sena.aspx",
 ];
 const game_types = [
-  "lotofacil",
-  "lotomania",
-  "dupla-sena",
   "mega-sena",
-  "quina",
-  "milionaria",
 ];
 
 // Função para realizar scraping e salvar resultados
