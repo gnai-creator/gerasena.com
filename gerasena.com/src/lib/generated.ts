@@ -25,9 +25,20 @@ async function ensureTable(): Promise<void> {
 
 export async function saveGenerated(numbers: number[]): Promise<void> {
   await ensureTable();
+  // Garantir que os números sejam únicos e ordenados
+  const unique = Array.from(new Set(numbers)).sort((a, b) => a - b);
+  if (unique.length !== 6) return;
+
+  // Evitar inserir jogos já existentes
+  const exists = await db.execute({
+    sql: `SELECT 1 FROM gerador WHERE bola1 = ? AND bola2 = ? AND bola3 = ? AND bola4 = ? AND bola5 = ? AND bola6 = ? LIMIT 1`,
+    args: unique,
+  });
+  if ((exists.rows as unknown[]).length) return;
+
   await db.execute({
     sql: `INSERT INTO gerador (bola1, bola2, bola3, bola4, bola5, bola6, created_at) VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`,
-    args: numbers,
+    args: unique,
   });
 }
 
