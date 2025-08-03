@@ -232,8 +232,6 @@ export async function analyzeHistorico(
     tf.layers.dense({ inputShape: [FEATURES.length], units: 32, activation: "relu" })
   );
   
-  model.add(tf.layers.dense({ units: 64, activation: "relu" }));
-  model.add(tf.layers.dense({ units: 64, activation: "relu" }));
   model.add(tf.layers.dense({ units: 32, activation: "relu" }));
   model.add(tf.layers.dense({ units: FEATURES.length }));
   model.compile({ loss: "meanSquaredError", optimizer: tf.train.adam(0.1) });
