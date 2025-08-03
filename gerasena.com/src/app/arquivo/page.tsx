@@ -15,6 +15,8 @@ interface ContestResult {
   concurso: number;
   counts: number[]; // index represents number of hits
   hasSena: boolean;
+  hasQuina: boolean;
+  hasQuadra: boolean;
 }
 
 export default function Arquivo() {
@@ -65,7 +67,9 @@ export default function Arquivo() {
         counts[hits]++;
       }
       const hasSena = drawNums.every((n) => allNums.has(n));
-      resArr.push({ concurso, counts, hasSena });
+      const hasQuina = counts[5] > 0;
+      const hasQuadra = counts[4] > 0;
+      resArr.push({ concurso, counts, hasSena, hasQuina, hasQuadra });
     }
     setResults(resArr);
   }
@@ -92,32 +96,39 @@ export default function Arquivo() {
       >
         Calcular
       </button>
-      {results.map((r) => (
-        <div key={r.concurso} className="mb-4">
-          <h3 className="font-semibold">Concurso {r.concurso}</h3>
-          <table className="mx-auto mt-2 text-sm ">
-            <thead>
-              <tr>
-                <th className="px-2 py-1 text-left">Acertos</th>
-                <th className="px-2 py-1 text-left">Quantidade</th>
-              </tr>
-            </thead>
-            <tbody>
-              {r.counts.map((c, i) => (
-                <tr key={i} className="odd:bg-gray-100 text-green-600">
-                  <td className="px-2 py-1">{i}</td>
-                  <td className="px-2 py-1">{c}</td>
+      {results.map((r) => {
+        const prizes: string[] = [];
+        if (r.hasQuina) prizes.push("quina");
+        if (r.hasQuadra) prizes.push("quadra");
+        return (
+          <div key={r.concurso} className="mb-4">
+            <h3 className="font-semibold">Concurso {r.concurso}</h3>
+            <table className="mx-auto mt-2 text-sm ">
+              <thead>
+                <tr>
+                  <th className="px-2 py-1 text-left">Acertos</th>
+                  <th className="px-2 py-1 text-left">Quantidade</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          <p className="mt-2 text-sm">
-            {r.hasSena
-              ? "As dezenas do concurso estão presentes nos números do arquivo."
-              : "As dezenas do concurso não aparecem todas nos números do arquivo."}
-          </p>
-        </div>
-      ))}
+              </thead>
+              <tbody>
+                {r.counts.map((c, i) => (
+                  <tr key={i} className="odd:bg-gray-100 text-green-600">
+                    <td className="px-2 py-1">{i}</td>
+                    <td className="px-2 py-1">{c}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="mt-2 text-sm">
+              {r.hasSena
+                ? "As dezenas do concurso estão presentes nos números do arquivo."
+                : prizes.length > 0
+                ? `Há ${prizes.join(" e ")} entre os jogos do arquivo.`
+                : "As dezenas do concurso não aparecem todas nos números do arquivo."}
+            </p>
+          </div>
+        );
+      })}
       <br />
       <Link
         href="/"
