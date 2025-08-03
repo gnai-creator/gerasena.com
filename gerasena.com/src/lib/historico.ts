@@ -13,11 +13,14 @@ export interface Draw {
   bola6: number;
 }
 
-export async function getHistorico(limit = 50): Promise<Draw[]> {
+export async function getHistorico(
+  limit = 50,
+  offset = 0
+): Promise<Draw[]> {
   try {
     const res = await db.execute({
-      sql: `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history ORDER BY concurso DESC LIMIT ?`,
-      args: [limit],
+      sql: `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history ORDER BY concurso DESC LIMIT ? OFFSET ?`,
+      args: [limit, offset],
     });
     return res.rows as unknown as Draw[];
   } catch (error) {
