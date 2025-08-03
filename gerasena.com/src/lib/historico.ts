@@ -182,13 +182,13 @@ function computeFeatures(
   ];
 }
 
-export async function analyzeHistorico(
-  before?: number
-): Promise<Record<string, number | [number, number]>> {
+export async function analyzeHistorico(): Promise<
+  Record<string, number | [number, number]>
+> {
   const tf: typeof tfTypes = await import("@tensorflow/tfjs");
   const result: Record<string, number | [number, number]> = {};
   FEATURES.forEach((f) => (result[f] = 0));
-  const historico = await getHistorico(50, 0, before);
+  const historico = await getHistorico(50);
   if (historico.length < 2) return result;
 
   const draws = [...historico].reverse();
@@ -232,6 +232,9 @@ export async function analyzeHistorico(
     tf.layers.dense({ inputShape: [FEATURES.length], units: 32, activation: "relu" })
   );
   
+  model.add(tf.layers.dense({ units: 64, activation: "relu" }));
+  model.add(tf.layers.dense({ units: 128, activation: "relu" }));
+  model.add(tf.layers.dense({ units: 64, activation: "relu" }));
   model.add(tf.layers.dense({ units: 32, activation: "relu" }));
   model.add(tf.layers.dense({ units: FEATURES.length }));
   model.compile({ loss: "meanSquaredError", optimizer: tf.train.adam(0.1) });
