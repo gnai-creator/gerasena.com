@@ -5,6 +5,7 @@ import { FEATURES } from "@/lib/features";
 import { FeatureSelector } from "@/components/FeatureSelector";
 import { generateGames } from "@/lib/genetic";
 import { evaluateGames } from "@/lib/evaluator";
+import Link from "next/link";
 
 const GROUPS = [
   FEATURES.slice(0, 4),
@@ -57,6 +58,7 @@ export default function Manual() {
       >
         {step < GROUPS.length - 1 ? "Próximo" : "Gerar"}
       </button>
+      <Link href="/">Voltar</Link>
     </main>
   );
 }

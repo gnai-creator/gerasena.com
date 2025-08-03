@@ -10,6 +10,7 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import Link from "next/link";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -56,6 +57,7 @@ export default function Estatisticas() {
           ))}
         </tbody>
       </table>
+      <Link href="/">Voltar</Link>
     </main>
   );
 }

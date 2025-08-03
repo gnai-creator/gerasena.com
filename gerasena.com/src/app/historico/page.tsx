@@ -1,4 +1,5 @@
 import { getHistorico } from "@/lib/historico";
+import Link from "next/link";
 
 export default async function Historico() {
   const draws = await getHistorico(50);
@@ -25,6 +26,7 @@ export default async function Historico() {
           ))}
         </tbody>
       </table>
+      <Link href="/">Voltar</Link>
     </main>
   );
 }

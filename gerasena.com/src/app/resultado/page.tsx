@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { GameCard } from "@/components/GameCard";
+import Link from "next/link";
 
 interface Game {
   numbers: number[];
@@ -25,6 +26,7 @@ export default function Resultado() {
           <GameCard key={idx} numbers={g.numbers} score={g.score} />
         ))}
       </div>
+      <Link href="/">Voltar</Link>
     </main>
   );
 }
