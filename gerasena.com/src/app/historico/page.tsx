@@ -16,7 +16,7 @@ export default async function Historico() {
         </thead>
         <tbody>
           {draws.map((d) => (
-            <tr key={d.concurso} className="odd:bg-gray-100">
+            <tr key={d.concurso} className="odd:bg-gray-100 text-green-500">
               <td className="px-2 py-1">{d.concurso}</td>
               <td className="px-2 py-1">{d.data}</td>
               <td className="px-2 py-1">
