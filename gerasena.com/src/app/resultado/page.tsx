@@ -18,8 +18,26 @@ export default function Resultado() {
     }
   }, []);
 
+  function handleExport() {
+    if (games.length === 0) return;
+    const content = games.map((g) => g.numbers.join(" - ")).join("\n");
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "jogos.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <main className="mx-auto min-h-screen max-w-2xl p-4 text-center">
+      <button
+        onClick={handleExport}
+        className="mb-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+      >
+        Exportar TXT
+      </button>
       <h2 className="mb-4 text-xl font-semibold">Resultados</h2>
       <div className="grid gap-4">
         {games.map((g, idx) => (
