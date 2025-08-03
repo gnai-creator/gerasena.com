@@ -21,9 +21,14 @@ async function seed() {
     bola6 INT
   )`);
 
-  await db.execute(`CREATE TABLE IF NOT EXISTS generated_numbers (
+  await db.execute(`CREATE TABLE IF NOT EXISTS gerador (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    numbers TEXT NOT NULL,
+    bola1 INT,
+    bola2 INT,
+    bola3 INT,
+    bola4 INT,
+    bola5 INT,
+    bola6 INT,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   )`);
 

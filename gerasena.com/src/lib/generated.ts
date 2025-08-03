@@ -8,20 +8,18 @@ export interface GeneratedRow {
 
 export async function saveGenerated(numbers: number[]): Promise<void> {
   await db.execute({
-    sql: `INSERT INTO generated_numbers (numbers, created_at) VALUES (?, datetime('now'))`,
-    args: [numbers.join(',')],
+    sql: `INSERT INTO gerador (bola1, bola2, bola3, bola4, bola5, bola6, created_at) VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`,
+    args: numbers,
   });
 }
 
 export async function getGenerated(): Promise<GeneratedRow[]> {
   const res = await db.execute(
-    `SELECT id, numbers, created_at FROM generated_numbers ORDER BY id DESC`
+    `SELECT id, bola1, bola2, bola3, bola4, bola5, bola6, created_at FROM gerador ORDER BY id DESC`
   );
   return res.rows.map((r: any) => ({
     id: r.id,
-    numbers: String(r.numbers)
-      .split(',')
-      .map((n) => parseInt(n, 10)),
+    numbers: [r.bola1, r.bola2, r.bola3, r.bola4, r.bola5, r.bola6].map((n: any) => parseInt(n, 10)),
     created_at: r.created_at,
   }));
 }
