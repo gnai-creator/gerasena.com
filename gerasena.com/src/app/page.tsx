@@ -1,8 +1,10 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 
 export default function Home() {
+  const [concurso, setConcurso] = useState("");
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-6">
       <Image src="/logo.png" alt="Gerasena" width={100} height={100} />
@@ -10,8 +12,15 @@ export default function Home() {
       <h1 className="text-2xl font-bold">Gere Jogos da Mega-Sena</h1>
       <input type="text" placeholder="Digite o sorteio que deseja os palpites" />
       <div className="flex gap-4 flex-col">
+        <input
+          type="number"
+          value={concurso}
+          onChange={(e) => setConcurso(e.target.value)}
+          placeholder="Concurso base"
+          className="rounded border px-4 py-2"
+        />
         <Link
-          href="/manual"
+          href={`/manual${concurso ? `?concurso=${concurso}` : ""}`}
           className="rounded bg-blue-600 px-4 py-2 text-white text-center hover:bg-blue-700"
         >
           Manual

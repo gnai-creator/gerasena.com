@@ -1,6 +1,6 @@
 import { db } from "./db";
 import { FEATURES } from "./features";
-import * as tf from "@tensorflow/tfjs";
+import type * as tfTypes from "@tensorflow/tfjs";
 
 export interface Draw {
   concurso: number;
@@ -15,12 +15,15 @@ export interface Draw {
 
 export async function getHistorico(
   limit = 50,
-  offset = 0
+  offset = 0,
+  before?: number
 ): Promise<Draw[]> {
   try {
     const res = await db.execute({
-      sql: `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history ORDER BY concurso DESC LIMIT ? OFFSET ?`,
-      args: [limit, offset],
+      sql: before
+        ? `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history WHERE concurso < ? ORDER BY concurso DESC LIMIT ? OFFSET ?`
+        : `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history ORDER BY concurso DESC LIMIT ? OFFSET ?`,
+      args: before ? [before, limit, offset] : [limit, offset],
     });
     return res.rows as unknown as Draw[];
   } catch (error) {
@@ -128,6 +131,7 @@ function computeFeatures(
 export async function analyzeHistorico(): Promise<
   Record<string, number | [number, number]>
 > {
+  const tf: typeof tfTypes = await import("@tensorflow/tfjs");
   const result: Record<string, number | [number, number]> = {};
   FEATURES.forEach((f) => (result[f] = 0));
   const historico = await getHistorico(50);
@@ -181,7 +185,7 @@ export async function analyzeHistorico(): Promise<
   model.compile({ loss: "meanSquaredError", optimizer: tf.train.adam(0.1) });
   await model.fit(xs, ys, { epochs: 100, verbose: 0 });
   const last = tf.tensor2d([featureVectors[featureVectors.length - 1]]);
-  const prediction = model.predict(last) as tf.Tensor;
+  const prediction = model.predict(last) as tfTypes.Tensor;
   const values = Array.from(prediction.dataSync());
 
   FEATURES.forEach((f, i) => {

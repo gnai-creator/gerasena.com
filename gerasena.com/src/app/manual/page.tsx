@@ -1,10 +1,9 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FEATURES } from "@/lib/features";
 import { FeatureSelector } from "@/components/FeatureSelector";
 import { generateGames } from "@/lib/genetic";
-import { evaluateGames } from "@/lib/evaluator";
 import Link from "next/link";
 import type { Draw } from "@/lib/historico";
 
@@ -13,10 +12,13 @@ const GROUPS = Array.from({ length: Math.ceil(FEATURES.length / GROUP_SIZE) }, (
   FEATURES.slice(i * GROUP_SIZE, i * GROUP_SIZE + GROUP_SIZE)
 );
 
-export default function Manual() {
+function ManualContent() {
   const [step, setStep] = useState(0);
   const [selected, setSelected] = useState<Record<string, number | [number, number]>>({});
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const concursoParam = searchParams.get("concurso");
+  const baseConcurso = concursoParam ? parseInt(concursoParam, 10) : undefined;
 
   const toggle = (f: string) => {
     setSelected((prev) => {
@@ -39,7 +41,9 @@ export default function Manual() {
       setStep(step + 1);
     } else {
       const games = generateGames(selected);
-      const res = await fetch("/api/historico");
+      const res = await fetch(
+        `/api/historico?limit=50${baseConcurso ? `&before=${baseConcurso}` : ""}`
+      );
       const draws: Draw[] = await res.json();
       const history = draws.map((d) => [
         d.bola1,
@@ -49,6 +53,7 @@ export default function Manual() {
         d.bola5,
         d.bola6,
       ]);
+      const { evaluateGames } = await import("@/lib/evaluator");
       const evaluated = evaluateGames(games, history);
       evaluated.forEach((g) => {
         fetch("/api/generated", {
@@ -83,5 +88,13 @@ export default function Manual() {
 
       >Voltar</Link>
     </main>
+  );
+}
+
+export default function Manual() {
+  return (
+    <Suspense fallback={<p>Carregando...</p>}>
+      <ManualContent />
+    </Suspense>
   );
 }

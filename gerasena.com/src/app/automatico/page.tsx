@@ -1,15 +1,16 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { analyzeHistorico, type Draw } from "@/lib/historico";
 import { generateGames } from "@/lib/genetic";
-import { evaluateGames } from "@/lib/evaluator";
+import type { Draw } from "@/lib/historico";
 
 export default function Automatico() {
   const router = useRouter();
 
   useEffect(() => {
     async function run() {
+      const { analyzeHistorico } = await import("@/lib/historico");
+      const { evaluateGames } = await import("@/lib/evaluator");
       const features = await analyzeHistorico();
       const games = generateGames(features);
       const res = await fetch("/api/historico");
