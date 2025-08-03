@@ -25,7 +25,7 @@ export default function Home() {
           Manual
         </Link>
         <Link
-          href="/automatico"
+          href={`/automatico${concurso ? `?concurso=${concurso}` : ""}`}
           className="rounded bg-green-600 px-4 py-2 text-white text-center hover:bg-green-700"
         >
           Automático
