@@ -29,11 +29,17 @@ export function evaluateGames(
   });
   const len = history.length;
 
-  const uniqueGames = Array.from(
-    new Map(games.map((g) => [g.join(","), g])).values()
-  );
+  const unique: number[][] = [];
+  const seen = new Set<string>();
+  for (const g of games) {
+    const key = g.join(",");
+    if (!seen.has(key)) {
+      seen.add(key);
+      unique.push(g);
+    }
+  }
 
-  return uniqueGames
+  return unique
     .map((g) => ({ numbers: g, score: evaluateGame(g, freq, len) }))
     .sort((a, b) => b.score - a.score);
 }

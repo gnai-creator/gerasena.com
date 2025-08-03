@@ -92,5 +92,14 @@ export function generateGames(
     population.push(...survivors);
   }
 
-  return Array.from(new Map(population.map((g) => [gameKey(g), g])).values());
+  const unique: number[][] = [];
+  const finalSeen = new Set<string>();
+  for (const g of population) {
+    const key = gameKey(g);
+    if (!finalSeen.has(key)) {
+      finalSeen.add(key);
+      unique.push(g);
+    }
+  }
+  return unique;
 }
