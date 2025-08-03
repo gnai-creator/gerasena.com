@@ -182,13 +182,13 @@ function computeFeatures(
   ];
 }
 
-export async function analyzeHistorico(): Promise<
-  Record<string, number | [number, number]>
-> {
+export async function analyzeHistorico(
+  before?: number
+): Promise<Record<string, number | [number, number]>> {
   const tf: typeof tfTypes = await import("@tensorflow/tfjs");
   const result: Record<string, number | [number, number]> = {};
   FEATURES.forEach((f) => (result[f] = 0));
-  const historico = await getHistorico(50);
+  const historico = await getHistorico(50, 0, before);
   if (historico.length < 2) return result;
 
   const draws = [...historico].reverse();
