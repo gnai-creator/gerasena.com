@@ -235,6 +235,8 @@ export async function analyzeHistorico(
   model.add(tf.layers.dense({ units: 64, activation: "relu" }));
   model.add(tf.layers.dense({ units: 128, activation: "relu" }));
   model.add(tf.layers.dense({ units: 256, activation: "relu" }));
+  model.add(tf.layers.dense({ units: 512, activation: "relu" }));
+  model.add(tf.layers.dense({ units: 256, activation: "relu" }));
   model.add(tf.layers.dense({ units: 128, activation: "relu" }));
   model.add(tf.layers.dense({ units: 64, activation: "relu" }));
   model.add(tf.layers.dense({ units: 32, activation: "relu" }));
