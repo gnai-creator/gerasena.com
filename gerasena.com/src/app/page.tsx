@@ -42,6 +42,12 @@ export default function Home() {
         >
           Estatísticas
         </Link>
+        <Link
+          href="/arquivo"
+          className="rounded bg-gray-600 px-4 py-2 text-white text-center hover:bg-gray-700"
+        >
+          Calcular Arquivo
+        </Link>
         <a
           href="https://github.com/gnai-creator/gerasena.com"
           className="rounded bg-gray-600 px-4 py-2 text-white text-center hover:bg-gray-700"
