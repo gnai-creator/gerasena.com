@@ -6,7 +6,25 @@ export interface GeneratedRow {
   created_at: string;
 }
 
+let initialized = false;
+
+async function ensureTable(): Promise<void> {
+  if (initialized) return;
+  await db.execute(`CREATE TABLE IF NOT EXISTS gerador (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    bola1 INT,
+    bola2 INT,
+    bola3 INT,
+    bola4 INT,
+    bola5 INT,
+    bola6 INT,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  )`);
+  initialized = true;
+}
+
 export async function saveGenerated(numbers: number[]): Promise<void> {
+  await ensureTable();
   await db.execute({
     sql: `INSERT INTO gerador (bola1, bola2, bola3, bola4, bola5, bola6, created_at) VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`,
     args: numbers,
@@ -14,6 +32,7 @@ export async function saveGenerated(numbers: number[]): Promise<void> {
 }
 
 export async function getGenerated(): Promise<GeneratedRow[]> {
+  await ensureTable();
   const res = await db.execute(
     `SELECT id, bola1, bola2, bola3, bola4, bola5, bola6, created_at FROM gerador ORDER BY id DESC`
   );
