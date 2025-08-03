@@ -12,8 +12,11 @@ function randomGame(): number[] {
 }
 
 function crossover(a: number[], b: number[]): number[] {
-  const child = [...a.slice(0, 3), ...b.slice(3)];
-  return Array.from(new Set(child))
+  const set = new Set([...a.slice(0, 3), ...b.slice(3)]);
+  while (set.size < 6) {
+    set.add(rand(1, 60));
+  }
+  return Array.from(set)
     .sort((x, y) => x - y)
     .slice(0, 6);
 }

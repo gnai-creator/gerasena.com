@@ -1,16 +1,25 @@
+import { db } from "./db";
 import { FEATURES } from "./features";
 
-// Mock data: 50 past draws with 6 numbers each
-export const historico: number[][] = Array.from({ length: 50 }, () => {
-  const nums: number[] = [];
-  while (nums.length < 6) {
-    const n = Math.floor(Math.random() * 60) + 1;
-    if (!nums.includes(n)) nums.push(n);
-  }
-  return nums.sort((a, b) => a - b);
-});
+export interface Draw {
+  concurso: number;
+  data: string;
+  bola1: number;
+  bola2: number;
+  bola3: number;
+  bola4: number;
+  bola5: number;
+  bola6: number;
+}
 
-// Simple analyzer that just returns all features
+export async function getHistorico(limit = 50): Promise<Draw[]> {
+  const res = await db.execute({
+    sql: `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history ORDER BY concurso DESC LIMIT ?`,
+    args: [limit],
+  });
+  return res.rows as unknown as Draw[];
+}
+
 export function analyzeHistorico(): string[] {
   return FEATURES;
 }
