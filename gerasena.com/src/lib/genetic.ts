@@ -35,26 +35,57 @@ function fitness(_game: number[]): number {
   return Math.random();
 }
 
+function gameKey(game: number[]): string {
+  return game.join(",");
+}
+
 export function generateGames(
   _features: Record<string, number>,
   populationSize = 100,
   generations = 50
 ): number[][] {
-  let population: number[][] = Array.from({ length: populationSize }, randomGame);
+  const population: number[][] = [];
+  const seen = new Set<string>();
+  while (population.length < populationSize) {
+    const game = randomGame();
+    const key = gameKey(game);
+    if (!seen.has(key)) {
+      seen.add(key);
+      population.push(game);
+    }
+  }
 
   for (let g = 0; g < generations; g++) {
     const scored = population
       .map((p) => ({ p, s: fitness(p) }))
       .sort((a, b) => b.s - a.s);
-    const survivors = scored.slice(0, populationSize / 2).map((x) => x.p);
+
+    const survivors: number[][] = [];
+    const survivorKeys = new Set<string>();
+
+    for (const { p } of scored) {
+      const key = gameKey(p);
+      if (!survivorKeys.has(key)) {
+        survivorKeys.add(key);
+        survivors.push(p);
+      }
+      if (survivors.length >= populationSize / 2) break;
+    }
+
     while (survivors.length < populationSize) {
       const a = survivors[rand(0, survivors.length - 1)];
       const b = survivors[rand(0, survivors.length - 1)];
       const child = crossover(a, b);
       mutate(child);
-      survivors.push(child);
+      const key = gameKey(child);
+      if (!survivorKeys.has(key)) {
+        survivorKeys.add(key);
+        survivors.push(child);
+      }
     }
-    population = survivors;
+
+    population.length = 0;
+    population.push(...survivors);
   }
 
   return population;
