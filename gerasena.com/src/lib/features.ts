@@ -14,6 +14,7 @@ export const FEATURES = [
   "min_distance",
   "max_distance",
   "repeat_prev",
+  "repeat_hist",
   "avg_hist_freq",
   "sum_digits",
   "last_digit_counts",
@@ -85,6 +86,10 @@ export const FEATURE_INFO: Record<
   repeat_prev: {
     label: "Repetições",
     description: "Quantidade de números repetidos do último concurso.",
+  },
+  repeat_hist: {
+    label: "Repetidas no histórico",
+    description: "Quantidade de números já sorteados anteriormente.",
   },
   avg_hist_freq: {
     label: "Freq. histórica média",

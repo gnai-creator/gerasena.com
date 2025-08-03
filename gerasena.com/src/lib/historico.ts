@@ -79,6 +79,7 @@ function computeFeatures(
   const minDist = Math.min(...diffs);
   const maxDist = Math.max(...diffs);
   const repeatPrev = prevDraw.filter((n) => sorted.includes(n)).length;
+  const repeatHist = sorted.filter((n) => histFreq[n - 1] > 0).length;
   const avgHistFreq =
     sorted.reduce((acc, n) => acc + histFreq[n - 1], 0) / sorted.length;
   const sumDigits = sorted.reduce(
@@ -115,6 +116,7 @@ function computeFeatures(
     minDist,
     maxDist,
     repeatPrev,
+    repeatHist,
     avgHistFreq,
     sumDigits,
     lastDigitStd,

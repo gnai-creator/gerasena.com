@@ -8,17 +8,14 @@ import { evaluateGames } from "@/lib/evaluator";
 import Link from "next/link";
 import type { Draw } from "@/lib/historico";
 
-const GROUPS = [
-  FEATURES.slice(0, 4),
-  FEATURES.slice(4, 8),
-  FEATURES.slice(8, 12),
-  FEATURES.slice(12, 16),
-  FEATURES.slice(16, 20),
-];
+const GROUP_SIZE = 4;
+const GROUPS = Array.from({ length: Math.ceil(FEATURES.length / GROUP_SIZE) }, (_v, i) =>
+  FEATURES.slice(i * GROUP_SIZE, i * GROUP_SIZE + GROUP_SIZE)
+);
 
 export default function Manual() {
   const [step, setStep] = useState(0);
-  const [selected, setSelected] = useState<Record<string, number>>({});
+  const [selected, setSelected] = useState<Record<string, number | [number, number]>>({});
   const router = useRouter();
 
   const toggle = (f: string) => {
@@ -27,13 +24,13 @@ export default function Manual() {
       if (f in next) {
         delete next[f];
       } else {
-        next[f] = 0;
+        next[f] = f === "sum" ? [0, 0] : 0;
       }
       return next;
     });
   };
 
-  const setValue = (f: string, value: number) => {
+  const setValue = (f: string, value: number | [number, number]) => {
     setSelected((prev) => ({ ...prev, [f]: value }));
   };
 
