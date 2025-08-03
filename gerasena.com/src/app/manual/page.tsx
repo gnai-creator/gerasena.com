@@ -1,0 +1,55 @@
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { FEATURES } from "@/lib/features";
+import { FeatureSelector } from "@/components/FeatureSelector";
+import { generateGames } from "@/lib/genetic";
+import { evaluateGames } from "@/lib/evaluator";
+
+const GROUPS = [
+  FEATURES.slice(0, 4),
+  FEATURES.slice(4, 8),
+  FEATURES.slice(8, 12),
+  FEATURES.slice(12, 16),
+  FEATURES.slice(16, 20),
+];
+
+export default function Manual() {
+  const [step, setStep] = useState(0);
+  const [selected, setSelected] = useState<string[]>([]);
+  const router = useRouter();
+
+  const toggle = (f: string) => {
+    setSelected((prev) =>
+      prev.includes(f) ? prev.filter((p) => p !== f) : [...prev, f]
+    );
+  };
+
+  const next = async () => {
+    if (step < GROUPS.length - 1) {
+      setStep(step + 1);
+    } else {
+      const games = generateGames(selected);
+      const evaluated = evaluateGames(games);
+      sessionStorage.setItem("results", JSON.stringify(evaluated));
+      router.push("/resultado");
+    }
+  };
+
+  return (
+    <main className="mx-auto flex min-h-screen max-w-md flex-col gap-4 p-4">
+      <h2 className="text-xl font-semibold">Passo {step + 1} de {GROUPS.length}</h2>
+      <FeatureSelector
+        features={GROUPS[step]}
+        selected={selected}
+        onToggle={toggle}
+      />
+      <button
+        onClick={next}
+        className="mt-auto rounded bg-blue-600 px-4 py-2 text-white"
+      >
+        {step < GROUPS.length - 1 ? "Próximo" : "Gerar"}
+      </button>
+    </main>
+  );
+}
