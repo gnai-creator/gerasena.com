@@ -32,10 +32,11 @@ export function evaluateGames(
   const unique: number[][] = [];
   const seen = new Set<string>();
   for (const g of games) {
-    const key = g.join(",");
+    const sorted = [...g].sort((a, b) => a - b);
+    const key = sorted.join(",");
     if (!seen.has(key)) {
       seen.add(key);
-      unique.push(g);
+      unique.push(sorted);
     }
   }
 

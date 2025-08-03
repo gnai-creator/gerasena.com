@@ -40,7 +40,7 @@ function fitness(_game: number[]): number {
 }
 
 function gameKey(game: number[]): string {
-  return game.join(",");
+  return [...game].sort((a, b) => a - b).join(",");
 }
 
 export function generateGames(
@@ -95,10 +95,11 @@ export function generateGames(
   const unique: number[][] = [];
   const finalSeen = new Set<string>();
   for (const g of population) {
-    const key = gameKey(g);
+    const sorted = [...g].sort((a, b) => a - b);
+    const key = sorted.join(",");
     if (!finalSeen.has(key)) {
       finalSeen.add(key);
-      unique.push(g);
+      unique.push(sorted);
     }
   }
   return unique;
