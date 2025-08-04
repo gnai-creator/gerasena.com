@@ -14,9 +14,31 @@ import type { Draw } from "@/lib/historico";
 interface ContestResult {
   concurso: number;
   counts: number[]; // index represents number of hits
+  expected: number[]; // expected counts for each number of hits
   hasSena: boolean;
   hasQuina: boolean;
   hasQuadra: boolean;
+  score: number;
+  expectedScore: number;
+}
+
+function combinacao(n: number, k: number): number {
+  if (k < 0 || k > n) return 0;
+  let res = 1;
+  for (let i = 1; i <= k; i++) {
+    res = (res * (n - i + 1)) / i;
+  }
+  return res;
+}
+
+function probabilidadeEsperada(acertos: number): number {
+  const totalCombinacoes = combinacao(60, 6);
+  const combAcertos = combinacao(6, acertos) * combinacao(54, 6 - acertos);
+  return combAcertos / totalCombinacoes;
+}
+
+function calcularPontuacao(freq: number[]): number {
+  return freq[4] * 10 + freq[5] * 50 + freq[6] * 200;
 }
 
 export default function Arquivo() {
@@ -48,6 +70,11 @@ export default function Arquivo() {
       for (const n of g) allNums.add(n);
     }
 
+    const expectedBase = Array.from({ length: 7 }, (_, hits) =>
+      probabilidadeEsperada(hits) * games.length
+    );
+    const expectedScoreBase = calcularPontuacao(expectedBase);
+
     const resArr: ContestResult[] = [];
     for (const concurso of concursoNums) {
       const resp = await fetch(`/api/historico?limit=1&before=${concurso + 1}`);
@@ -70,7 +97,17 @@ export default function Arquivo() {
       const hasSena = drawNums.every((n) => allNums.has(n));
       const hasQuina = counts[5] > 0;
       const hasQuadra = counts[4] > 0;
-      resArr.push({ concurso, counts, hasSena, hasQuina, hasQuadra });
+      const score = calcularPontuacao(counts);
+      resArr.push({
+        concurso,
+        counts,
+        expected: expectedBase.slice(),
+        hasSena,
+        hasQuina,
+        hasQuadra,
+        score,
+        expectedScore: expectedScoreBase,
+      });
     }
     setResults(resArr);
   }
@@ -117,6 +154,7 @@ export default function Arquivo() {
                 <tr>
                   <th className="px-2 py-1 text-left">Acertos</th>
                   <th className="px-2 py-1 text-left">Quantidade</th>
+                  <th className="px-2 py-1 text-left">Esperado</th>
                 </tr>
               </thead>
               <tbody>
@@ -124,10 +162,20 @@ export default function Arquivo() {
                   <tr key={i} className="odd:bg-gray-100 text-green-600">
                     <td className="px-2 py-1">{i}</td>
                     <td className="px-2 py-1">{c}</td>
+                    <td className="px-2 py-1">{r.expected[i].toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            <p className="mt-2 text-sm">
+              Pontuação: {r.score.toFixed(2)} (esperado {r.expectedScore.toFixed(2)}) —
+              {" "}
+              {r.score > r.expectedScore
+                ? "Acima da expectativa."
+                : r.score < r.expectedScore
+                ? "Abaixo da expectativa."
+                : "Na expectativa."}
+            </p>
             <p className="mt-2 text-sm">
               {r.hasSena
                 ? "As dezenas do concurso estão presentes nos números do arquivo."
