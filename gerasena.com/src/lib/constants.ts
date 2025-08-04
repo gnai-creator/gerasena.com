@@ -6,14 +6,12 @@
 export const QTD_HIST = 200;
 
 // Quantidade de jogos a serem gerados pelo algoritmo genético.
-// Pode ser ajustado via variável de ambiente `NEXT_PUBLIC_QTD_GERAR`.
 export const QTD_GERAR = 100;
 
 // Limite máximo de jogos que podem ser gerados pelo usuário.
 export const QTD_GERAR_MAX = 10000;
 
 // Tolerância aplicada à soma prevista ao gerar jogos.
-// Pode ser ajustada via variável de ambiente `NEXT_PUBLIC_SUM_TOLERANCE`.
 export const SUM_TOLERANCE = 20;
 
 export const SITE_URL = "https://gerasena.com";
