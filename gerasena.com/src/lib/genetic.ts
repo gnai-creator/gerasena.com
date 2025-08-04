@@ -9,7 +9,8 @@ const PRIMES = new Set([
 
 function std(nums: number[]): number {
   const mean = nums.reduce((a, b) => a + b, 0) / nums.length;
-  const variance = nums.reduce((acc, n) => acc + (n - mean) ** 2, 0) / nums.length;
+  const variance =
+    nums.reduce((acc, n) => acc + (n - mean) ** 2, 0) / nums.length;
   return Math.sqrt(variance);
 }
 
@@ -184,7 +185,12 @@ function computeFeatures(
 }
 
 function fitness(game: number[], features: FeatureResult): number {
-  const values = computeFeatures(game, features.histFreq, features.prevDraw, features.histPos);
+  const values = computeFeatures(
+    game,
+    features.histFreq,
+    features.prevDraw,
+    features.histPos
+  );
   let error = 0;
   for (const f of FEATURES) {
     if (f === "sum") continue;
@@ -205,19 +211,14 @@ export function generateGames(
   _features: FeatureResult,
   populationSize = 100,
   generations = 50,
-  seed?: string
-): number[][] {
-  const rng = seed ? seedrandom(seed) : Math.random;
-  const sumRange = Array.isArray(_features.sum) ? _features.sum : null;
-
+  seed?: string,
   sumTolerance = SUM_TOLERANCE
 ): number[][] {
+  const rng = seed ? seedrandom(seed) : Math.random;
+
   let sumRange: [number, number] | null = null;
   if (typeof _features.sum === "number") {
-    sumRange = [
-      _features.sum - sumTolerance,
-      _features.sum + sumTolerance,
-    ];
+    sumRange = [_features.sum - sumTolerance, _features.sum + sumTolerance];
   } else if (Array.isArray(_features.sum)) {
     sumRange = [
       _features.sum[0] - sumTolerance,
@@ -260,7 +261,10 @@ export function generateGames(
 
     let childAttempts = 0;
     const maxChildAttempts = populationSize * 10;
-    while (survivors.length < populationSize && childAttempts < maxChildAttempts) {
+    while (
+      survivors.length < populationSize &&
+      childAttempts < maxChildAttempts
+    ) {
       childAttempts++;
       if (survivors.length === 0) break;
       const a = survivors[rand(rng, 0, survivors.length - 1)];
