@@ -3,6 +3,7 @@ import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { generateGames } from "@/lib/genetic";
 import type { Draw } from "@/lib/historico";
+import { QTD_HIST } from "@/lib/constants";
 
 function AutomaticoContent() {
   const router = useRouter();
@@ -17,7 +18,9 @@ function AutomaticoContent() {
       const features = await analyzeHistorico(baseConcurso);
       const games = generateGames(features);
       const res = await fetch(
-        `/api/historico?limit=50${baseConcurso ? `&before=${baseConcurso}` : ""}`
+        `/api/historico?limit=${QTD_HIST}${
+          baseConcurso ? `&before=${baseConcurso}` : ""
+        }`
       );
       const draws: Draw[] = await res.json();
       const history = draws.map((d) => [

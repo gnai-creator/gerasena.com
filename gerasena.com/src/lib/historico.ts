@@ -1,5 +1,6 @@
 import { db } from "./db";
 import { FEATURES } from "./features";
+import { QTD_HIST } from "./constants";
 import type * as tfTypes from "@tensorflow/tfjs";
 
 export interface Draw {
@@ -14,7 +15,7 @@ export interface Draw {
 }
 
 export async function getHistorico(
-  limit = 50,
+  limit = QTD_HIST,
   offset = 0,
   before?: number
 ): Promise<Draw[]> {
@@ -199,7 +200,7 @@ export async function analyzeHistorico(
     histPos: [],
   };
   FEATURES.forEach((f) => (result[f] = 0));
-  const historico = await getHistorico(50, 0, before);
+  const historico = await getHistorico(QTD_HIST, 0, before);
   if (historico.length < 2) return result;
 
   const draws = [...historico].reverse();

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Draw } from "@/lib/historico";
+import { QTD_HIST } from "@/lib/constants";
 
 interface Props {
   initialDraws: Draw[];
@@ -16,7 +17,7 @@ export default function HistoricoTable({ initialDraws }: Props) {
 
   const loadMore = useCallback(async () => {
     setLoading(true);
-    const res = await fetch(`/api/historico?limit=50&offset=${offset}`);
+    const res = await fetch(`/api/historico?limit=${QTD_HIST}&offset=${offset}`);
     const data: Draw[] = await res.json();
     setDraws((prev) => [...prev, ...data]);
     setOffset((prev) => prev + data.length);
