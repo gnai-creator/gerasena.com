@@ -5,7 +5,7 @@ import { FEATURES } from "@/lib/features";
 import { FeatureSelector } from "@/components/FeatureSelector";
 import { generateGames } from "@/lib/genetic";
 import Link from "next/link";
-import type { Draw } from "@/lib/historico";
+import type { Draw, FeatureResult } from "@/lib/historico";
 
 const GROUP_SIZE = 4;
 const GROUPS = Array.from({ length: Math.ceil(FEATURES.length / GROUP_SIZE) }, (_v, i) =>
@@ -40,7 +40,13 @@ function ManualContent() {
     if (step < GROUPS.length - 1) {
       setStep(step + 1);
     } else {
-      const games = generateGames(selected);
+      const features: FeatureResult = {
+        histFreq: [],
+        prevDraw: [],
+        histPos: [],
+      };
+      Object.assign(features, selected);
+      const games = generateGames(features);
       const res = await fetch(
         `/api/historico?limit=50${baseConcurso ? `&before=${baseConcurso}` : ""}`
       );
