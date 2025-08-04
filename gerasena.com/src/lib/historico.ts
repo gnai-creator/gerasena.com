@@ -208,6 +208,7 @@ export async function analyzeHistorico(
   };
   FEATURES.forEach((f) => (result[f] = 0));
   const historico = await getHistorico(QTD_HIST, 0, before);
+  console.log("analyzing historico with", historico.length, "draws");
   if (historico.length < 2) return result;
 
   const draws = [...historico].reverse();
