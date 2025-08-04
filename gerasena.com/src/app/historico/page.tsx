@@ -1,10 +1,10 @@
-import { getHistorico } from "@/lib/historico";
+import { getCachedHistorico } from "@/lib/historico";
 import Link from "next/link";
 import HistoricoTable from "@/components/HistoricoTable";
 import { QTD_HIST } from "@/lib/constants";
 
 export default async function Historico() {
-  const draws = await getHistorico(QTD_HIST);
+  const draws = await getCachedHistorico(QTD_HIST);
   return (
     <main className="mx-auto max-w-3xl p-4 text-center">
       <h2 className="mb-4 text-xl font-semibold">Histórico</h2>

@@ -4,6 +4,14 @@ import { QTD_HIST } from "./constants";
 import type * as tfTypes from "@tensorflow/tfjs";
 import path from "path";
 
+/**
+ * Simple in-memory cache for draw history.  Because this project runs in a
+ * server environment we can keep the fetched draws between requests and avoid
+ * hitting the database for every call.  The cache is invalidated whenever new
+ * draws are inserted through the `/api/scrap` route.
+ */
+let historicoCache: Draw[] | null = null;
+
 export interface Draw {
   concurso: number;
   data: string;
@@ -15,50 +23,60 @@ export interface Draw {
   bola6: number;
 }
 
-export async function getHistorico(
+export async function getCachedHistorico(
   limit = QTD_HIST,
   offset = 0,
   before?: number,
   desc = true
 ): Promise<Draw[]> {
-  const order = desc ? "DESC" : "ASC";
-  const sql = before
-    ? `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history WHERE concurso < ? ORDER BY concurso ${order} LIMIT ? OFFSET ?`
-    : `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history ORDER BY concurso ${order} LIMIT ? OFFSET ?`;
+  const allDraws = await loadHistorico();
+  let filtered = before !== undefined
+    ? allDraws.filter((d) => d.concurso < before)
+    : [...allDraws];
+
+  filtered.sort((a, b) => (desc ? b.concurso - a.concurso : a.concurso - b.concurso));
+  return filtered.slice(offset, offset + limit);
+}
+
+// Backwards compatibility - old name still exported
+export { getCachedHistorico as getHistorico };
+
+async function loadHistorico(): Promise<Draw[]> {
+  if (historicoCache) return historicoCache;
   try {
     const res = await db.execute({
-      sql,
-      args: before ? [before, limit, offset] : [limit, offset],
+      sql: `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history ORDER BY concurso ASC`,
     });
     const rows = res.rows as unknown as Draw[];
     if (rows.length) {
-      return rows;
+      historicoCache = rows;
+      return historicoCache;
     }
-    return await getHistoricoFromCsv(limit, offset, before, desc);
+    historicoCache = await getHistoricoFromCsvFull();
+    return historicoCache;
   } catch (error) {
     if (
       error instanceof Error &&
       (/no such table: history/i.test(error.message) ||
         /SQL read operations are forbidden/i.test(error.message) ||
-        // libSQL errors expose a `code` property we can check for blocked operations
         ("code" in error && (error as any).code === "BLOCKED"))
     ) {
-      return await getHistoricoFromCsv(limit, offset, before, desc);
+      historicoCache = await getHistoricoFromCsvFull();
+      return historicoCache;
     }
     throw error;
   }
 }
 
-async function getHistoricoFromCsv(
-  limit: number,
-  offset: number,
-  before?: number,
-  desc = true
-): Promise<Draw[]> {
+export function invalidateHistoricoCache() {
+  historicoCache = null;
+}
+
+async function getHistoricoFromCsvFull(): Promise<Draw[]> {
   const csvPath = path.join(process.cwd(), "public", "mega-sena.csv");
   const fs = await import("fs/promises");
   const file = await fs.readFile(csvPath, "utf8");
-  let draws: Draw[] = file
+  const draws: Draw[] = file
     .trim()
     .split("\n")
     .slice(1)
@@ -75,11 +93,8 @@ async function getHistoricoFromCsv(
         bola6: parseInt(b6, 10),
       };
     });
-  if (before !== undefined) {
-    draws = draws.filter((d) => d.concurso < before);
-  }
-  draws.sort((a, b) => (desc ? b.concurso - a.concurso : a.concurso - b.concurso));
-  return draws.slice(offset, offset + limit);
+  draws.sort((a, b) => a.concurso - b.concurso);
+  return draws;
 }
 
 const PRIMES = new Set([
@@ -244,7 +259,7 @@ export async function analyzeHistorico(
     histPos: [],
   };
   FEATURES.forEach((f) => (result[f] = 0));
-  const historico = await getHistorico(QTD_HIST, 0, before);
+  const historico = await getCachedHistorico(QTD_HIST, 0, before);
   console.log("analyzing historico with", historico.length, "draws");
   if (historico.length < 2) return result;
 

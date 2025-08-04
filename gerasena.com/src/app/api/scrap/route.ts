@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { CAIXA_API_BASE } from "@/lib/constants";
+import { invalidateHistoricoCache } from "@/lib/historico";
 
 export async function GET() {
   try {
@@ -45,6 +46,8 @@ export async function GET() {
                VALUES (?, ?, ?, ?, ?, ?, ?, ?)` ,
         args: [concurso, drawDate, b1, b2, b3, b4, b5, b6],
       });
+      // New draw inserted, refresh cache
+      invalidateHistoricoCache();
     }
 
     return NextResponse.json({ ok: true });
