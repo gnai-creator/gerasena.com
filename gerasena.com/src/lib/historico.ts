@@ -265,7 +265,9 @@ export async function analyzeHistorico(
   FEATURES.forEach((f, i) => {
     result[f] = values[i];
   });
-  result.sum = sumRange;
+  // Preserve the predicted sum value from the neural network in `result.sum`.
+  // Store the historical min/max range separately for potential use.
+  result.sumRange = sumRange;
 
   const histPos = posSum.map((s, i) => (posCount[i] ? s / posCount[i] : 0));
   result.histFreq = freq;
