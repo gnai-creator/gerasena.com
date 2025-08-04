@@ -274,6 +274,7 @@ export async function analyzeHistorico(
   result.prevDraw = prevDraw;
   result.histPos = histPos;
 
+  model.dispose();
   tf.dispose([xs, ys, last, prediction]);
   return result;
 }
