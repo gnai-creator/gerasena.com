@@ -1,8 +1,9 @@
+// @ts-nocheck
 // Dependências
 const { Builder, By, Key } = require("selenium-webdriver");
 const fs = require("fs");
-const axios = require("axios");
 const { until } = require("selenium-webdriver");
+const { MEGA_SENA_PAGE, SCRAPER_INTERVAL_MS } = require("../src/lib/constants");
 
 // Função para iniciar o driver Selenium
 async function iniciarDriver() {
@@ -119,9 +120,7 @@ async function scrapeResultsWithSelenium(
   }
 }
 
-const file_mapping = [
-  "https://loterias.caixa.gov.br/Paginas/Mega-Sena.aspx",
-];
+const file_mapping = [MEGA_SENA_PAGE];
 const game_types = [
   "mega-sena",
 ];
@@ -162,7 +161,7 @@ async function scrapeAndSaveResults(filename, sorteioNum, sorteioAntigo) {
       );
 
       // Aguarda 15 segundos antes de continuar para a próxima iteração
-      await new Promise((resolve) => setTimeout(resolve, 15000));
+      await new Promise((resolve) => setTimeout(resolve, SCRAPER_INTERVAL_MS));
     }
   }
 })();

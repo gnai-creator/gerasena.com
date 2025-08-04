@@ -1,18 +1,16 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { CAIXA_API_BASE } from "@/lib/constants";
 
 export async function GET() {
   try {
-    const res = await fetch(
-      "https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena",
-      {
-        headers: {
-          Accept: "application/json",
-          "User-Agent": "Mozilla/5.0",
-        },
-        cache: "no-cache",
-      }
-    );
+    const res = await fetch(CAIXA_API_BASE, {
+      headers: {
+        Accept: "application/json",
+        "User-Agent": "Mozilla/5.0",
+      },
+      cache: "no-cache",
+    });
 
     if (!res.ok) {
       throw new Error(`Failed to fetch latest draw: ${res.status}`);
