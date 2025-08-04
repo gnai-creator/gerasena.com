@@ -32,7 +32,8 @@ export const FEATURE_INFO: Record<
 > = {
   sum: {
     label: "Soma",
-    description: "Soma de todos os números escolhidos.",
+    description:
+      "Soma de todos os números escolhidos. Pode ser usada com um valor alvo e uma tolerância configurável.",
   },
   mean: {
     label: "Média",
