@@ -17,12 +17,14 @@ export interface Draw {
 export async function getHistorico(
   limit = QTD_HIST,
   offset = 0,
-  before?: number
+  before?: number,
+  desc = true
 ): Promise<Draw[]> {
   try {
+    const order = desc ? "DESC" : "ASC";
     const sql = before
-      ? `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history WHERE concurso < ? ORDER BY concurso DESC LIMIT ? OFFSET ?`
-      : `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history ORDER BY concurso DESC LIMIT ? OFFSET ?`;
+      ? `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history WHERE concurso < ? ORDER BY concurso ${order} LIMIT ? OFFSET ?`
+      : `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history ORDER BY concurso ${order} LIMIT ? OFFSET ?`;
     const res = await db.execute({
       sql,
       args: before ? [before, limit, offset] : [limit, offset],

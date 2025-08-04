@@ -15,7 +15,7 @@ function parseBrDate(d: string): Date {
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const target = searchParams.get("target") ?? undefined;
-  const draws = await getHistorico(1000);
+  const draws = await getHistorico(1000, 0, undefined, false);
   const generated = await getGenerated(target ?? undefined);
   const results = [] as { concurso: number; hits: number }[];
 
