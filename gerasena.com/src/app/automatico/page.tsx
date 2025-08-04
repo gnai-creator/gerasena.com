@@ -56,7 +56,7 @@ function AutomaticoContent() {
         fetch("/api/generated", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ numbers: g.numbers }),
+          body: JSON.stringify({ numbers: g.numbers, target: String(before) }),
         });
       }
       sessionStorage.setItem("results", JSON.stringify(evaluated));
