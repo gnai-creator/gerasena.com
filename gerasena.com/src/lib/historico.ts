@@ -2,7 +2,7 @@ import { db } from "./db";
 import { FEATURES } from "./features";
 import { QTD_HIST } from "./constants";
 import type * as tfTypes from "@tensorflow/tfjs";
-import fs from "fs/promises";
+import { promises as fs } from "fs";
 import path from "path";
 
 export interface Draw {
