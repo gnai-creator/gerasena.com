@@ -217,7 +217,12 @@ export function generateGames(
   const rng = seed ? seedrandom(seed) : Math.random;
 
   let sumRange: [number, number] | null = null;
-  if (typeof _features.sum === "number") {
+  if (Array.isArray(_features.sumRange)) {
+    sumRange = [
+      _features.sumRange[0] - sumTolerance,
+      _features.sumRange[1] + sumTolerance,
+    ];
+  } else if (typeof _features.sum === "number") {
     sumRange = [_features.sum - sumTolerance, _features.sum + sumTolerance];
   } else if (Array.isArray(_features.sum)) {
     sumRange = [
