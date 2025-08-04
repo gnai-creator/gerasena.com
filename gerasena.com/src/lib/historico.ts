@@ -23,8 +23,11 @@ export interface Draw {
   bola6: number;
 }
 
+const HISTORICO_CACHE = new Map<string, Draw[]>();
+
 export async function getCachedHistorico(
 let csvCache: { draws: Draw[]; mtimeMs: number } | null = null;
+
 
 export async function getHistorico(
 
@@ -72,11 +75,28 @@ async function loadHistorico(): Promise<Draw[]> {
   }
 }
 
-export function invalidateHistoricoCache() {
-  historicoCache = null;
+export async function getHistoricoCached(
+  limit = QTD_HIST,
+  offset = 0,
+  before?: number,
+  desc = true
+): Promise<Draw[]> {
+  const key = `${limit}-${offset}-${before ?? ""}-${desc}`;
+  if (HISTORICO_CACHE.has(key)) {
+    return HISTORICO_CACHE.get(key)!;
+  }
+  const draws = await getHistorico(limit, offset, before, desc);
+  HISTORICO_CACHE.set(key, draws);
+  return draws;
 }
 
-async function getHistoricoFromCsvFull(): Promise<Draw[]> {
+async function getHistoricoFromCsv(
+  limit: number,
+  offset: number,
+  before?: number,
+  desc = true
+): Promise<Draw[]> {
+
   const csvPath = path.join(process.cwd(), "public", "mega-sena.csv");
   const fs = await import("fs/promises");
 
