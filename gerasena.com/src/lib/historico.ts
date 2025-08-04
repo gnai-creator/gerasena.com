@@ -3,7 +3,6 @@ import { FEATURES } from "./features";
 import { QTD_HIST } from "./constants";
 import type * as tfTypes from "@tensorflow/tfjs";
 import path from "path";
-
 export interface Draw {
   concurso: number;
   data: string;
@@ -14,6 +13,8 @@ export interface Draw {
   bola5: number;
   bola6: number;
 }
+
+let csvCache: { draws: Draw[]; mtimeMs: number } | null = null;
 
 export async function getHistorico(
   limit = QTD_HIST,
@@ -57,29 +58,42 @@ async function getHistoricoFromCsv(
 ): Promise<Draw[]> {
   const csvPath = path.join(process.cwd(), "public", "mega-sena.csv");
   const fs = await import("fs/promises");
-  const file = await fs.readFile(csvPath, "utf8");
-  let draws: Draw[] = file
-    .trim()
-    .split("\n")
-    .slice(1)
-    .map((line) => {
-      const [concurso, data, b1, b2, b3, b4, b5, b6] = line.split(",");
-      return {
-        concurso: parseInt(concurso, 10),
-        data,
-        bola1: parseInt(b1, 10),
-        bola2: parseInt(b2, 10),
-        bola3: parseInt(b3, 10),
-        bola4: parseInt(b4, 10),
-        bola5: parseInt(b5, 10),
-        bola6: parseInt(b6, 10),
-      };
-    });
-  if (before !== undefined) {
-    draws = draws.filter((d) => d.concurso < before);
+  const stats = await fs.stat(csvPath);
+  if (!csvCache || stats.mtimeMs > csvCache.mtimeMs) {
+    const file = await fs.readFile(csvPath, "utf8");
+    csvCache = {
+      draws: file
+        .trim()
+        .split("\n")
+        .slice(1)
+        .map((line) => {
+          const [concurso, data, b1, b2, b3, b4, b5, b6] = line.split(",");
+          return {
+            concurso: parseInt(concurso, 10),
+            data,
+            bola1: parseInt(b1, 10),
+            bola2: parseInt(b2, 10),
+            bola3: parseInt(b3, 10),
+            bola4: parseInt(b4, 10),
+            bola5: parseInt(b5, 10),
+            bola6: parseInt(b6, 10),
+          };
+        }),
+      mtimeMs: stats.mtimeMs,
+    };
   }
+
+  let draws =
+    before !== undefined
+      ? csvCache.draws.filter((d) => d.concurso < before)
+      : csvCache.draws.slice();
+
   draws.sort((a, b) => (desc ? b.concurso - a.concurso : a.concurso - b.concurso));
   return draws.slice(offset, offset + limit);
+}
+
+export function clearHistoricoCache(): void {
+  csvCache = null;
 }
 
 const PRIMES = new Set([
