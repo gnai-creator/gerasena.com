@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getHistorico } from "@/lib/historico";
+import { getCachedHistorico } from "@/lib/historico";
 import { QTD_HIST } from "@/lib/constants";
 
 export async function GET(request: Request) {
@@ -16,6 +16,6 @@ export async function GET(request: Request) {
     "before:",
     before
   );
-  const draws = await getHistorico(limit, offset, before);
+  const draws = await getCachedHistorico(limit, offset, before);
   return NextResponse.json(draws);
 }

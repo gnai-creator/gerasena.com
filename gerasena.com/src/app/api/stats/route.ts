@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getHistoricoCached, type Draw } from "@/lib/historico";
+
 import { getGenerated } from "@/lib/generated";
 
 function parseBrDate(d: string): Date {
@@ -15,7 +16,9 @@ function parseBrDate(d: string): Date {
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const target = searchParams.get("target") ?? undefined;
-  const { draws, drawIndex } = await loadDraws();
+
+  const draws = await getCachedHistorico(1000, 0, undefined, false);
+
   const generated = await getGenerated(target ?? undefined);
   const results = [] as { concurso: number; hits: number }[];
 
