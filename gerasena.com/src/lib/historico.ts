@@ -36,7 +36,13 @@ export async function getHistorico(
     }
     return await getHistoricoFromCsv(limit, offset, before, desc);
   } catch (error) {
-    if (error instanceof Error && /no such table: history/i.test(error.message)) {
+    if (
+      error instanceof Error &&
+      (/no such table: history/i.test(error.message) ||
+        /SQL read operations are forbidden/i.test(error.message) ||
+        // libSQL errors expose a `code` property we can check for blocked operations
+        ("code" in error && (error as any).code === "BLOCKED"))
+    ) {
       return await getHistoricoFromCsv(limit, offset, before, desc);
     }
     throw error;
