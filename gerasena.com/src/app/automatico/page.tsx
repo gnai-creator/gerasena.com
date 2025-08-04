@@ -14,6 +14,7 @@ function AutomaticoContent() {
   const qtdGerar = qtdParam
     ? Math.min(Math.max(parseInt(qtdParam, 10), 1), QTD_GERAR_MAX)
     : QTD_GERAR;
+  const seed = searchParams.get("seed") || undefined;
 
   useEffect(() => {
     async function run() {
@@ -28,7 +29,7 @@ function AutomaticoContent() {
       const before = baseConcurso ?? lastConcurso;
 
       const features = await analyzeHistorico(before);
-      const games = generateGames(features, qtdGerar);
+      const games = generateGames(features, qtdGerar, undefined, seed);
       const res = await fetch(
         `/api/historico?limit=${QTD_HIST}${before ? `&before=${before}` : ""}`
       );
@@ -53,7 +54,7 @@ function AutomaticoContent() {
       router.push("/resultado");
     }
     run();
-  }, [router, baseConcurso, qtdGerar]);
+  }, [router, baseConcurso, qtdGerar, seed]);
 
   return (
     <main className="flex min-h-screen items-center justify-center">

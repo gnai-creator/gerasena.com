@@ -1,5 +1,6 @@
 import { FEATURES } from "./features";
 import type { FeatureResult } from "./historico";
+import seedrandom from "seedrandom";
 import { SUM_TOLERANCE } from "./constants";
 
 const PRIMES = new Set([
@@ -12,8 +13,8 @@ function std(nums: number[]): number {
   return Math.sqrt(variance);
 }
 
-function rand(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+function rand(rng: () => number, min: number, max: number): number {
+  return Math.floor(rng() * (max - min + 1)) + min;
 }
 
 function uniqueGame(nums: number[]): number[] {
@@ -23,27 +24,27 @@ function uniqueGame(nums: number[]): number[] {
     .slice(0, 6);
 }
 
-function randomGame(): number[] {
+function randomGame(rng: () => number): number[] {
   const set = new Set<number>();
   while (set.size < 6) {
-    set.add(rand(1, 60));
+    set.add(rand(rng, 1, 60));
   }
   return uniqueGame(Array.from(set));
 }
 
-function crossover(a: number[], b: number[]): number[] {
+function crossover(rng: () => number, a: number[], b: number[]): number[] {
   const set = new Set([...a.slice(0, 3), ...b.slice(3)]);
   while (set.size < 6) {
-    set.add(rand(1, 60));
+    set.add(rand(rng, 1, 60));
   }
   return uniqueGame(Array.from(set));
 }
 
-function mutate(game: number[]) {
-  if (Math.random() < 0.1) {
-    const idx = rand(0, 5);
-    let n = rand(1, 60);
-    while (game.includes(n)) n = rand(1, 60);
+function mutate(rng: () => number, game: number[]) {
+  if (rng() < 0.1) {
+    const idx = rand(rng, 0, 5);
+    let n = rand(rng, 1, 60);
+    while (game.includes(n)) n = rand(rng, 1, 60);
     game[idx] = n;
     const unique = uniqueGame(game);
     game.splice(0, game.length, ...unique);
@@ -204,6 +205,11 @@ export function generateGames(
   _features: FeatureResult,
   populationSize = 100,
   generations = 50,
+  seed?: string
+): number[][] {
+  const rng = seed ? seedrandom(seed) : Math.random;
+  const sumRange = Array.isArray(_features.sum) ? _features.sum : null;
+
   sumTolerance = SUM_TOLERANCE
 ): number[][] {
   let sumRange: [number, number] | null = null;
@@ -218,13 +224,14 @@ export function generateGames(
       _features.sum[1] + sumTolerance,
     ];
   }
+
   const population: number[][] = [];
   const seen = new Set<string>();
   let attempts = 0;
   const maxAttempts = populationSize * 10;
   while (population.length < populationSize && attempts < maxAttempts) {
     attempts++;
-    const game = randomGame();
+    const game = randomGame(rng);
     const sum = game.reduce((a, b) => a + b, 0);
     if (sumRange && (sum < sumRange[0] || sum > sumRange[1])) continue;
     const key = gameKey(game);
@@ -256,10 +263,10 @@ export function generateGames(
     while (survivors.length < populationSize && childAttempts < maxChildAttempts) {
       childAttempts++;
       if (survivors.length === 0) break;
-      const a = survivors[rand(0, survivors.length - 1)];
-      const b = survivors[rand(0, survivors.length - 1)];
-      const child = crossover(a, b);
-      mutate(child);
+      const a = survivors[rand(rng, 0, survivors.length - 1)];
+      const b = survivors[rand(rng, 0, survivors.length - 1)];
+      const child = crossover(rng, a, b);
+      mutate(rng, child);
       const sum = child.reduce((acc, n) => acc + n, 0);
       if (sumRange && (sum < sumRange[0] || sum > sumRange[1])) continue;
       const key = gameKey(child);

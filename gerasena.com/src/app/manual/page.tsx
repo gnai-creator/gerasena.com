@@ -24,6 +24,8 @@ function ManualContent() {
   const qtdGerar = qtdParam
     ? Math.min(Math.max(parseInt(qtdParam, 10), 1), QTD_GERAR_MAX)
     : QTD_GERAR;
+  const seedParam = searchParams.get("seed") || "";
+  const [seed, setSeed] = useState(seedParam);
 
   const toggle = (f: string) => {
     setSelected((prev) => {
@@ -51,7 +53,7 @@ function ManualContent() {
         histPos: [],
       };
       Object.assign(features, selected);
-      const games = generateGames(features, qtdGerar);
+      const games = generateGames(features, qtdGerar, undefined, seed || undefined);
       const res = await fetch(
         `/api/historico?limit=${QTD_HIST}${
           baseConcurso ? `&before=${baseConcurso}` : ""
@@ -88,6 +90,13 @@ function ManualContent() {
         selected={selected}
         onToggle={toggle}
         onChange={setValue}
+      />
+      <input
+        type="text"
+        value={seed}
+        onChange={(e) => setSeed(e.target.value)}
+        placeholder="Semente (opcional)"
+        className="rounded border px-2 py-1"
       />
       <button
         onClick={next}
