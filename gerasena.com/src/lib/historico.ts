@@ -29,12 +29,16 @@ export async function getHistorico(
       sql,
       args: before ? [before, limit, offset] : [limit, offset],
     });
+    console.log("Fetched historico rows:", res.rows);
     return res.rows as unknown as Draw[];
   } catch (error) {
     // If the history table is missing (e.g. when the database hasn't been
     // seeded yet), gracefully fall back to an empty list so that static builds
     // do not fail.
-    if (error instanceof Error && /no such table: history/i.test(error.message)) {
+    if (
+      error instanceof Error &&
+      /no such table: history/i.test(error.message)
+    ) {
       return [];
     }
     throw error;
@@ -235,18 +239,19 @@ export async function analyzeHistorico(
   }
 
   const sums = featureVectors.map((v) => v[0]);
-  const sumRange: [number, number] = [
-    Math.min(...sums),
-    Math.max(...sums),
-  ];
+  const sumRange: [number, number] = [Math.min(...sums), Math.max(...sums)];
 
   const xs = tf.tensor2d(featureVectors.slice(0, -1));
   const ys = tf.tensor2d(featureVectors.slice(1));
   const model = tf.sequential();
   model.add(
-    tf.layers.dense({ inputShape: [FEATURES.length], units: 32, activation: "relu" })
+    tf.layers.dense({
+      inputShape: [FEATURES.length],
+      units: 32,
+      activation: "relu",
+    })
   );
-  
+
   model.add(tf.layers.dense({ units: 64, activation: "relu" }));
   model.add(tf.layers.dense({ units: 128, activation: "relu" }));
   model.add(tf.layers.dropout({ rate: 0.2 }));
