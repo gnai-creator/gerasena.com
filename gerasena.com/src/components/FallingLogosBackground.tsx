@@ -23,7 +23,7 @@ export default function FallingLogosBackground() {
         height / 2,
         height / -2,
         1,
-        1000,
+        1000
       );
       camera.position.z = 10;
 
@@ -38,7 +38,7 @@ export default function FallingLogosBackground() {
       const LOGO_COUNT = 20;
 
       function randomizeLogo(sprite: import("three").Sprite) {
-        const size = 32 + Math.random() * 96;
+        const size = 24 + Math.random() * 48; // Random size between 24 and 72
         sprite.scale.set(size, size, 1);
         sprite.userData = {
           vy: 0.5 + Math.random() * 2,
@@ -53,7 +53,7 @@ export default function FallingLogosBackground() {
         sprite.position.set(
           Math.random() * width - width / 2,
           height / 2 + Math.random() * height,
-          0,
+          0
         );
         scene.add(sprite);
         logos.push(sprite);
@@ -103,4 +103,3 @@ export default function FallingLogosBackground() {
 
   return <div ref={mountRef} className="fixed inset-0 -z-10" />;
 }
-
