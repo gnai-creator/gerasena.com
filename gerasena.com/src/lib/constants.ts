@@ -1,4 +1,4 @@
-export const QTD_HIST = 100;
+export const QTD_HIST = 200;
 
 // Quantidade de jogos a serem gerados pelo algoritmo genético.
 // Pode ser ajustado via variável de ambiente `NEXT_PUBLIC_QTD_GERAR`.
