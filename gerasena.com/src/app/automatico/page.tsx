@@ -11,7 +11,9 @@ function AutomaticoContent() {
   const concursoParam = searchParams.get("concurso");
   const baseConcurso = concursoParam ? parseInt(concursoParam, 10) : undefined;
   const qtdParam = searchParams.get("qtd");
-  const qtdGerar = qtdParam ? Math.min(Math.max(parseInt(qtdParam, 10), 1), QTD_GERAR_MAX) : QTD_GERAR;
+  const qtdGerar = qtdParam
+    ? Math.min(Math.max(parseInt(qtdParam, 10), 1), QTD_GERAR_MAX)
+    : QTD_GERAR;
   const seed = searchParams.get("seed") || undefined;
 
   useEffect(() => {
@@ -19,7 +21,9 @@ function AutomaticoContent() {
       const { evaluateGames } = await import("@/lib/evaluator");
       console.log("analyzing historico with baseConcurso", baseConcurso);
       const latestRes = await fetch(
-        `/api/historico?limit=${QTD_HIST}${baseConcurso ? `&before=${baseConcurso}` : ""}`
+        `/api/historico?limit=${QTD_HIST}${
+          baseConcurso ? `&before=${baseConcurso}` : ""
+        }`
       );
       const latest: Draw[] = await latestRes.json();
       const lastConcurso = latest[0]?.concurso;
@@ -29,7 +33,7 @@ function AutomaticoContent() {
         `/api/analyze${before ? `?before=${before}` : ""}`
       );
       const features: FeatureResult = await featuresRes.json();
-      const games = generateGames(features, qtdGerar, undefined, seed);
+      const games = generateGames(features, qtdGerar, qtdGerar / 2, seed);
       const res = await fetch(
         `/api/historico?limit=${QTD_HIST}${before ? `&before=${before}` : ""}`
       );

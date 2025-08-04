@@ -53,7 +53,7 @@ function ManualContent() {
         histPos: [],
       };
       Object.assign(features, selected);
-      const games = generateGames(features, qtdGerar, undefined, seed || undefined);
+      const games = generateGames(features, qtdGerar, qtdGerar / 2, seed || undefined);
       const res = await fetch(
         `/api/historico?limit=${QTD_HIST}${
           baseConcurso ? `&before=${baseConcurso}` : ""
