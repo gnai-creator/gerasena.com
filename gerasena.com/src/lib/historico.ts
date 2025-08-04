@@ -182,11 +182,11 @@ function computeFeatures(
   ];
 }
 
-export interface FeatureResult
-  extends Record<string, number | [number, number]> {
+export interface FeatureResult {
   histFreq: number[];
   prevDraw: number[];
   histPos: number[];
+  [key: string]: number | [number, number] | number[];
 }
 
 export async function analyzeHistorico(
