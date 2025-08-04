@@ -9,13 +9,16 @@ import type { Draw, FeatureResult } from "@/lib/historico";
 import { QTD_HIST, QTD_GERAR, QTD_GERAR_MAX } from "@/lib/constants";
 
 const GROUP_SIZE = 4;
-const GROUPS = Array.from({ length: Math.ceil(FEATURES.length / GROUP_SIZE) }, (_v, i) =>
-  FEATURES.slice(i * GROUP_SIZE, i * GROUP_SIZE + GROUP_SIZE)
+const GROUPS = Array.from(
+  { length: Math.ceil(FEATURES.length / GROUP_SIZE) },
+  (_v, i) => FEATURES.slice(i * GROUP_SIZE, i * GROUP_SIZE + GROUP_SIZE)
 );
 
 function ManualContent() {
   const [step, setStep] = useState(0);
-  const [selected, setSelected] = useState<Record<string, number | [number, number]>>({});
+  const [selected, setSelected] = useState<
+    Record<string, number | [number, number]>
+  >({});
   const router = useRouter();
   const searchParams = useSearchParams();
   const concursoParam = searchParams.get("concurso");
@@ -53,7 +56,12 @@ function ManualContent() {
         histPos: [],
       };
       Object.assign(features, selected);
-      const games = generateGames(features, qtdGerar, qtdGerar / 2, seed || undefined);
+      const games = generateGames(
+        features,
+        qtdGerar,
+        Math.round(qtdGerar / 2),
+        seed || undefined
+      );
       const res = await fetch(
         `/api/historico?limit=${QTD_HIST}${
           baseConcurso ? `&before=${baseConcurso}` : ""
@@ -84,7 +92,9 @@ function ManualContent() {
 
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col gap-4 p-4 text-center">
-      <h2 className="text-xl font-semibold">Passo {step + 1} de {GROUPS.length}</h2>
+      <h2 className="text-xl font-semibold">
+        Passo {step + 1} de {GROUPS.length}
+      </h2>
       <FeatureSelector
         features={GROUPS[step]}
         selected={selected}
@@ -105,10 +115,12 @@ function ManualContent() {
         {step < GROUPS.length - 1 ? "Próximo" : "Gerar"}
       </button>
       <br />
-      <Link href="/"
+      <Link
+        href="/"
         className="rounded bg-green-600 px-4 py-2 text-white text-center hover:bg-green-700"
-
-      >Voltar</Link>
+      >
+        Voltar
+      </Link>
     </main>
   );
 }
