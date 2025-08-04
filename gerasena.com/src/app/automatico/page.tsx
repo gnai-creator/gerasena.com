@@ -23,7 +23,9 @@ function AutomaticoContent() {
 
       // Sempre obtenha o número do último concurso para que o sorteio sendo
       // previsto não faça parte dos dados de treino/avaliação.
-      const latestRes = await fetch("/api/historico?limit=1");
+      const latestRes = await fetch(
+        `/api/historico?limit=1${baseConcurso ? `&before=${baseConcurso}` : ""}`
+      );
       const latest: Draw[] = await latestRes.json();
       const lastConcurso = latest[0]?.concurso;
       const before = baseConcurso ?? lastConcurso;
