@@ -6,7 +6,7 @@ import { FeatureSelector } from "@/components/FeatureSelector";
 import { generateGames } from "@/lib/genetic";
 import Link from "next/link";
 import type { Draw, FeatureResult } from "@/lib/historico";
-import { QTD_HIST } from "@/lib/constants";
+import { QTD_HIST, QTD_GERAR } from "@/lib/constants";
 
 const GROUP_SIZE = 4;
 const GROUPS = Array.from({ length: Math.ceil(FEATURES.length / GROUP_SIZE) }, (_v, i) =>
@@ -47,7 +47,7 @@ function ManualContent() {
         histPos: [],
       };
       Object.assign(features, selected);
-      const games = generateGames(features);
+      const games = generateGames(features, QTD_GERAR);
       const res = await fetch(
         `/api/historico?limit=${QTD_HIST}${
           baseConcurso ? `&before=${baseConcurso}` : ""
