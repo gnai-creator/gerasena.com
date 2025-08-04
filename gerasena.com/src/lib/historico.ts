@@ -244,7 +244,7 @@ export async function analyzeHistorico(
   model.add(tf.layers.dense({ units: 64, activation: "relu" }));
   model.add(tf.layers.dense({ units: 32, activation: "relu" }));
   model.add(tf.layers.dense({ units: FEATURES.length }));
-  model.compile({ loss: "binaryCrossentropy", optimizer: tf.train.adam(0.01) });
+  model.compile({ loss: "meanSquaredError", optimizer: tf.train.adam(0.01) });
   await model.fit(xs, ys, { epochs: 100, verbose: 0 });
   const last = tf.tensor2d([featureVectors[featureVectors.length - 1]]);
   const prediction = model.predict(last) as tfTypes.Tensor;
