@@ -35,9 +35,18 @@ export async function GET() {
       bola6 INT
     )`);
 
-    const existing = await db.execute({
-      sql: "SELECT 1 FROM history WHERE concurso = ?",
-      args: [concurso],
+    await db.execute({
+      sql: `INSERT OR IGNORE INTO history (
+              concurso,
+              data,
+              bola1,
+              bola2,
+              bola3,
+              bola4,
+              bola5,
+              bola6
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: [concurso, drawDate, b1, b2, b3, b4, b5, b6],
     });
 
     if (existing.rows.length === 0) {
@@ -49,6 +58,7 @@ export async function GET() {
       // New draw inserted, refresh cache
       invalidateHistoricoCache();
     }
+
 
     return NextResponse.json({ ok: true });
   } catch (err) {
