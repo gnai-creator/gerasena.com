@@ -15,6 +15,8 @@ export interface Draw {
   bola6: number;
 }
 
+const HISTORICO_CACHE = new Map<string, Draw[]>();
+
 export async function getHistorico(
   limit = QTD_HIST,
   offset = 0,
@@ -47,6 +49,21 @@ export async function getHistorico(
     }
     throw error;
   }
+}
+
+export async function getHistoricoCached(
+  limit = QTD_HIST,
+  offset = 0,
+  before?: number,
+  desc = true
+): Promise<Draw[]> {
+  const key = `${limit}-${offset}-${before ?? ""}-${desc}`;
+  if (HISTORICO_CACHE.has(key)) {
+    return HISTORICO_CACHE.get(key)!;
+  }
+  const draws = await getHistorico(limit, offset, before, desc);
+  HISTORICO_CACHE.set(key, draws);
+  return draws;
 }
 
 async function getHistoricoFromCsv(

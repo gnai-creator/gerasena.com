@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getHistorico } from "@/lib/historico";
+import { getHistoricoCached, type Draw } from "@/lib/historico";
 import { getGenerated } from "@/lib/generated";
 
 function parseBrDate(d: string): Date {
@@ -15,7 +15,7 @@ function parseBrDate(d: string): Date {
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const target = searchParams.get("target") ?? undefined;
-  const draws = await getHistorico(1000, 0, undefined, false);
+  const { draws, drawIndex } = await loadDraws();
   const generated = await getGenerated(target ?? undefined);
   const results = [] as { concurso: number; hits: number }[];
 
@@ -24,7 +24,7 @@ export async function GET(request: Request) {
     if (g.target) {
       const contest = parseInt(g.target, 10);
       if (!isNaN(contest)) {
-        draw = draws.find((d) => d.concurso === contest);
+        draw = drawIndex.get(contest);
       } else {
         const targetDate = g.target.includes("/")
           ? parseBrDate(g.target)
@@ -49,4 +49,15 @@ export async function GET(request: Request) {
   }
 
   return NextResponse.json(results);
+}
+
+let cachedDraws: Draw[] | null = null;
+let cachedIndex: Map<number, Draw> | null = null;
+
+async function loadDraws() {
+  if (!cachedDraws) {
+    cachedDraws = await getHistoricoCached(1000, 0, undefined, false);
+    cachedIndex = new Map(cachedDraws.map((d) => [d.concurso, d]));
+  }
+  return { draws: cachedDraws, drawIndex: cachedIndex! };
 }
