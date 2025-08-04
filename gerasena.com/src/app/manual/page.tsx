@@ -65,7 +65,7 @@ function ManualContent() {
       );
       const res = await fetch(
         `/api/historico?limit=${QTD_HIST}${
-          baseConcurso ? `&before=${baseConcurso + 1}` : ""
+          baseConcurso ? `&before=${baseConcurso}` : ""
         }`
       );
       const draws: Draw[] = await res.json();
