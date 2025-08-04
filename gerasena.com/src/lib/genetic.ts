@@ -226,6 +226,16 @@ export function generateGames(
     ];
   }
 
+  if (sumRange) {
+    const min = Math.max(sumRange[0], 21);
+    const max = Math.min(sumRange[1], 345);
+    if (min > max) {
+      sumRange = null;
+    } else {
+      sumRange = [min, max];
+    }
+  }
+
   const population: number[][] = [];
   const seen = new Set<string>();
   let attempts = 0;
