@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getHistoricoCached, type Draw } from "@/lib/historico";
+import { getCachedHistorico, type Draw } from "@/lib/historico";
 
 import { getGenerated } from "@/lib/generated";
 
@@ -17,7 +17,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const target = searchParams.get("target") ?? undefined;
 
-  const draws = await getCachedHistorico(1000, 0, undefined, false);
+  const { draws, drawIndex } = await loadDraws();
 
   const generated = await getGenerated(target ?? undefined);
   const results = [] as { concurso: number; hits: number }[];
@@ -59,7 +59,7 @@ let cachedIndex: Map<number, Draw> | null = null;
 
 async function loadDraws() {
   if (!cachedDraws) {
-    cachedDraws = await getHistoricoCached(1000, 0, undefined, false);
+    cachedDraws = await getCachedHistorico(1000, 0, undefined, false);
     cachedIndex = new Map(cachedDraws.map((d) => [d.concurso, d]));
   }
   return { draws: cachedDraws, drawIndex: cachedIndex! };

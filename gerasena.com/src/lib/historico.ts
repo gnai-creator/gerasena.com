@@ -24,10 +24,28 @@ export interface Draw {
 }
 
 const HISTORICO_CACHE = new Map<string, Draw[]>();
-
-export async function getCachedHistorico(
 let csvCache: { draws: Draw[]; mtimeMs: number } | null = null;
 
+export function invalidateHistoricoCache() {
+  historicoCache = null;
+  csvCache = null;
+  HISTORICO_CACHE.clear();
+}
+
+export async function getCachedHistorico(
+  limit = QTD_HIST,
+  offset = 0,
+  before?: number,
+  desc = true
+): Promise<Draw[]> {
+  const key = `${limit}-${offset}-${before ?? ""}-${desc}`;
+  if (HISTORICO_CACHE.has(key)) {
+    return HISTORICO_CACHE.get(key)!;
+  }
+  const draws = await getHistorico(limit, offset, before, desc);
+  HISTORICO_CACHE.set(key, draws);
+  return draws;
+}
 
 export async function getHistorico(
 
@@ -44,9 +62,6 @@ export async function getHistorico(
   filtered.sort((a, b) => (desc ? b.concurso - a.concurso : a.concurso - b.concurso));
   return filtered.slice(offset, offset + limit);
 }
-
-// Backwards compatibility - old name still exported
-export { getCachedHistorico as getHistorico };
 
 async function loadHistorico(): Promise<Draw[]> {
   if (historicoCache) return historicoCache;
@@ -73,21 +88,6 @@ async function loadHistorico(): Promise<Draw[]> {
     }
     throw error;
   }
-}
-
-export async function getHistoricoCached(
-  limit = QTD_HIST,
-  offset = 0,
-  before?: number,
-  desc = true
-): Promise<Draw[]> {
-  const key = `${limit}-${offset}-${before ?? ""}-${desc}`;
-  if (HISTORICO_CACHE.has(key)) {
-    return HISTORICO_CACHE.get(key)!;
-  }
-  const draws = await getHistorico(limit, offset, before, desc);
-  HISTORICO_CACHE.set(key, draws);
-  return draws;
 }
 
 async function getHistoricoFromCsv(
@@ -133,6 +133,10 @@ async function getHistoricoFromCsv(
 
   draws.sort((a, b) => (desc ? b.concurso - a.concurso : a.concurso - b.concurso));
   return draws.slice(offset, offset + limit);
+}
+
+async function getHistoricoFromCsvFull(): Promise<Draw[]> {
+  return getHistoricoFromCsv(Number.MAX_SAFE_INTEGER, 0);
 }
 
 export function clearHistoricoCache(): void {
