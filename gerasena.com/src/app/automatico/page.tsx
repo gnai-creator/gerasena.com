@@ -23,7 +23,9 @@ function AutomaticoContent() {
       const latestRes = await fetch(`/api/historico?limit=1`);
       const latest: Draw[] = await latestRes.json();
       const lastConcurso = latest[0]?.concurso;
+
       const before = (baseConcurso ?? lastConcurso) + 1;
+
 
       const featuresRes = await fetch(`/api/analyze?before=${before}`);
       const features: FeatureResult = await featuresRes.json();
