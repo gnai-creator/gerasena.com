@@ -2,9 +2,17 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import { QTD_GERAR_MAX } from "@/lib/constants";
 
 export default function Home() {
   const [concurso, setConcurso] = useState("");
+  const [qtd, setQtd] = useState("");
+
+  const params = new URLSearchParams();
+  if (concurso) params.set("concurso", concurso);
+  if (qtd) params.set("qtd", qtd);
+  const query = params.toString();
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-6">
       <Image src="/logo.png" alt="Gerasena" width={100} height={100} />
@@ -18,14 +26,31 @@ export default function Home() {
           placeholder="Concurso base"
           className="rounded border px-4 py-2"
         />
+        <input
+          type="number"
+          value={qtd}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (!val) {
+              setQtd("");
+            } else {
+              const num = Math.min(parseInt(val, 10), QTD_GERAR_MAX);
+              setQtd(num.toString());
+            }
+          }}
+          placeholder="Quantidade de jogos"
+          className="rounded border px-4 py-2"
+          min={1}
+          max={QTD_GERAR_MAX}
+        />
         <Link
-          href={`/manual${concurso ? `?concurso=${concurso}` : ""}`}
+          href={`/manual${query ? `?${query}` : ""}`}
           className="rounded bg-blue-600 px-4 py-2 text-white text-center hover:bg-blue-700"
         >
           Manual
         </Link>
         <Link
-          href={`/automatico${concurso ? `?concurso=${concurso}` : ""}`}
+          href={`/automatico${query ? `?${query}` : ""}`}
           className="rounded bg-green-600 px-4 py-2 text-white text-center hover:bg-green-700"
         >
           Automático
