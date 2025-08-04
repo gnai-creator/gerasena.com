@@ -20,10 +20,11 @@ export async function getHistorico(
   before?: number
 ): Promise<Draw[]> {
   try {
+    const sql = before
+      ? `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history WHERE concurso < ? ORDER BY concurso DESC LIMIT ? OFFSET ?`
+      : `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history ORDER BY concurso DESC LIMIT ? OFFSET ?`;
     const res = await db.execute({
-      sql: before
-        ? `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history WHERE concurso < ? ORDER BY concurso DESC LIMIT ? OFFSET ?`
-        : `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history ORDER BY concurso DESC LIMIT ? OFFSET ?`,
+      sql,
       args: before ? [before, limit, offset] : [limit, offset],
     });
     return res.rows as unknown as Draw[];
