@@ -2,6 +2,8 @@ import { db } from "./db";
 import { FEATURES } from "./features";
 import { QTD_HIST } from "./constants";
 import type * as tfTypes from "@tensorflow/tfjs";
+import fs from "fs/promises";
+import path from "path";
 
 export interface Draw {
   concurso: number;
@@ -20,25 +22,58 @@ export async function getHistorico(
   before?: number,
   desc = true
 ): Promise<Draw[]> {
+  const order = desc ? "DESC" : "ASC";
+  const sql = before
+    ? `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history WHERE concurso < ? ORDER BY concurso ${order} LIMIT ? OFFSET ?`
+    : `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history ORDER BY concurso ${order} LIMIT ? OFFSET ?`;
   try {
-    const order = desc ? "DESC" : "ASC";
-    const sql = before
-      ? `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history WHERE concurso < ? ORDER BY concurso ${order} LIMIT ? OFFSET ?`
-      : `SELECT concurso, data, bola1, bola2, bola3, bola4, bola5, bola6 FROM history ORDER BY concurso ${order} LIMIT ? OFFSET ?`;
     const res = await db.execute({
       sql,
       args: before ? [before, limit, offset] : [limit, offset],
     });
-    return res.rows as unknown as Draw[];
+    const rows = res.rows as unknown as Draw[];
+    if (rows.length) {
+      return rows;
+    }
+    return await getHistoricoFromCsv(limit, offset, before, desc);
   } catch (error) {
-    // If the history table is missing (e.g. when the database hasn't been
-    // seeded yet), gracefully fall back to an empty list so that static builds
-    // do not fail.
     if (error instanceof Error && /no such table: history/i.test(error.message)) {
-      return [];
+      return await getHistoricoFromCsv(limit, offset, before, desc);
     }
     throw error;
   }
+}
+
+async function getHistoricoFromCsv(
+  limit: number,
+  offset: number,
+  before?: number,
+  desc = true
+): Promise<Draw[]> {
+  const csvPath = path.join(process.cwd(), "public", "mega-sena.csv");
+  const file = await fs.readFile(csvPath, "utf8");
+  let draws: Draw[] = file
+    .trim()
+    .split("\n")
+    .slice(1)
+    .map((line) => {
+      const [concurso, data, b1, b2, b3, b4, b5, b6] = line.split(",");
+      return {
+        concurso: parseInt(concurso, 10),
+        data,
+        bola1: parseInt(b1, 10),
+        bola2: parseInt(b2, 10),
+        bola3: parseInt(b3, 10),
+        bola4: parseInt(b4, 10),
+        bola5: parseInt(b5, 10),
+        bola6: parseInt(b6, 10),
+      };
+    });
+  if (before !== undefined) {
+    draws = draws.filter((d) => d.concurso < before);
+  }
+  draws.sort((a, b) => (desc ? b.concurso - a.concurso : a.concurso - b.concurso));
+  return draws.slice(offset, offset + limit);
 }
 
 const PRIMES = new Set([
