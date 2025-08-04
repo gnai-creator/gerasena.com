@@ -27,7 +27,8 @@ function AutomaticoContent() {
       );
       const latest: Draw[] = await latestRes.json();
       const lastConcurso = latest[0]?.concurso;
-      const before = baseConcurso ?? lastConcurso;
+      const before =
+        baseConcurso ?? (lastConcurso !== undefined ? lastConcurso + 1 : undefined);
 
       const featuresRes = await fetch(
         `/api/analyze${
