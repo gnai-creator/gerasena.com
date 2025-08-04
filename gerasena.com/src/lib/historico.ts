@@ -182,11 +182,22 @@ function computeFeatures(
   ];
 }
 
+export interface FeatureResult
+  extends Record<string, number | [number, number]> {
+  histFreq: number[];
+  prevDraw: number[];
+  histPos: number[];
+}
+
 export async function analyzeHistorico(
   before?: number
-): Promise<Record<string, number | [number, number]>> {
+): Promise<FeatureResult> {
   const tf: typeof tfTypes = await import("@tensorflow/tfjs");
-  const result: Record<string, number | [number, number]> = {};
+  const result: FeatureResult = {
+    histFreq: [],
+    prevDraw: [],
+    histPos: [],
+  };
   FEATURES.forEach((f) => (result[f] = 0));
   const historico = await getHistorico(50, 0, before);
   if (historico.length < 2) return result;
@@ -254,6 +265,11 @@ export async function analyzeHistorico(
     result[f] = values[i];
   });
   result.sum = sumRange;
+
+  const histPos = posSum.map((s, i) => (posCount[i] ? s / posCount[i] : 0));
+  result.histFreq = freq;
+  result.prevDraw = prevDraw;
+  result.histPos = histPos;
 
   tf.dispose([xs, ys, last, prediction]);
   return result;
