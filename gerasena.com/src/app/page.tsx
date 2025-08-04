@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { QTD_GERAR_MAX } from "@/lib/constants";
+import FallingLogosBackground from "@/components/FallingLogosBackground";
 
 export default function Home() {
   const [concurso, setConcurso] = useState("");
@@ -14,11 +15,13 @@ export default function Home() {
   const query = params.toString();
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-6">
-      <Image src="/logo.png" alt="Gerasena" width={100} height={100} />
-      <h1 className="text-2xl font-bold">Gerasena</h1>
-      <h1 className="text-2xl font-bold">Gere Jogos da Mega-Sena</h1>
-      <div className="flex gap-4 flex-col">
+    <>
+      <FallingLogosBackground />
+      <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-6">
+        <Image src="/logo.png" alt="Gerasena" width={100} height={100} />
+        <h1 className="text-2xl font-bold">Gerasena</h1>
+        <h1 className="text-2xl font-bold">Gere Jogos da Mega-Sena</h1>
+        <div className="flex gap-4 flex-col">
         <input
           type="number"
           value={concurso}
@@ -79,8 +82,9 @@ export default function Home() {
         >
           Código Fonte
         </a>
-      </div>
-    </main>
+        </div>
+      </main>
+    </>
   );
 }
 
