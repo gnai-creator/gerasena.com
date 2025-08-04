@@ -18,7 +18,16 @@ export async function GET(request: Request) {
  * contest number or draw date the game is meant for.
  */
 export async function POST(req: Request) {
-  const { numbers, target } = await req.json();
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "invalid JSON" }, { status: 400 });
+  }
+  const { numbers, target } = (body ?? {}) as {
+    numbers?: unknown;
+    target?: unknown;
+  };
   if (!Array.isArray(numbers)) {
     return NextResponse.json({ error: "numbers required" }, { status: 400 });
   }
