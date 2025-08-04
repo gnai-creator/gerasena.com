@@ -59,7 +59,7 @@ function ManualContent() {
       const games = generateGames(
         features,
         qtdGerar,
-        Math.round(qtdGerar / 4),
+        Math.min(100, Math.round(Math.sqrt(qtdGerar))),
         seed || undefined
       );
       const res = await fetch(

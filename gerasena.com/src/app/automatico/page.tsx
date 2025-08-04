@@ -36,7 +36,7 @@ function AutomaticoContent() {
       const games = generateGames(
         features,
         qtdGerar,
-        Math.round(qtdGerar / 4),
+        Math.min(100, Math.round(Math.sqrt(qtdGerar))),
         seed
       );
       const res = await fetch(
