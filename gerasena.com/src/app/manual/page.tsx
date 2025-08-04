@@ -56,10 +56,11 @@ function ManualContent() {
         histPos: [],
       };
       Object.assign(features, selected);
+      const generations = qtdGerar > 5000 ? 80 : 50;
       const games = generateGames(
         features,
         qtdGerar,
-        Math.min(100, Math.round(Math.sqrt(qtdGerar))),
+        generations,
         seed || undefined
       );
       const res = await fetch(

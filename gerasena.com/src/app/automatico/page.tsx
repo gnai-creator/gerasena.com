@@ -33,12 +33,8 @@ function AutomaticoContent() {
         `/api/analyze${before ? `?before=${before}` : ""}`
       );
       const features: FeatureResult = await featuresRes.json();
-      const games = generateGames(
-        features,
-        qtdGerar,
-        Math.min(100, Math.round(Math.sqrt(qtdGerar))),
-        seed
-      );
+      const generations = qtdGerar > 5000 ? 80 : 50;
+      const games = generateGames(features, qtdGerar, generations, seed);
       const res = await fetch(
         `/api/historico?limit=${QTD_HIST}${before ? `&before=${before}` : ""}`
       );
