@@ -1,5 +1,5 @@
 const CACHE_NAME = 'gerasena-cache-v1';
-const URLS_TO_CACHE = ['/'];
+const URLS_TO_CACHE = ['/', '/automatico', '/resultado'];
 
 self.addEventListener('install', event => {
   event.waitUntil(
