@@ -19,12 +19,18 @@ function AutomaticoContent() {
     async function run() {
       const { analyzeHistorico } = await import("@/lib/historico");
       const { evaluateGames } = await import("@/lib/evaluator");
-      const features = await analyzeHistorico(baseConcurso);
+
+      // Sempre obtenha o número do último concurso para que o sorteio sendo
+      // previsto não faça parte dos dados de treino/avaliação.
+      const latestRes = await fetch("/api/historico?limit=1");
+      const latest: Draw[] = await latestRes.json();
+      const lastConcurso = latest[0]?.concurso;
+      const before = baseConcurso ?? lastConcurso;
+
+      const features = await analyzeHistorico(before);
       const games = generateGames(features, qtdGerar);
       const res = await fetch(
-        `/api/historico?limit=${QTD_HIST}${
-          baseConcurso ? `&before=${baseConcurso}` : ""
-        }`
+        `/api/historico?limit=${QTD_HIST}${before ? `&before=${before}` : ""}`
       );
       const draws: Draw[] = await res.json();
       const history = draws.map((d) => [
