@@ -36,10 +36,30 @@ async function ensureTable(): Promise<void> {
       // ignore errors from stubbed db clients
     }
 
+    // remove duplicate rows so that a unique index can be created safely
+    try {
+      await db.execute(
+        `DELETE FROM gerador
+         WHERE rowid NOT IN (
+           SELECT MIN(rowid)
+           FROM gerador
+           GROUP BY bola1, bola2, bola3, bola4, bola5, bola6
+         )`
+      );
+    } catch {
+      // ignore errors from stubbed db clients
+    }
+
     // ensure uniqueness across all six number columns
-    await db.execute(
-      `CREATE UNIQUE INDEX IF NOT EXISTS idx_gerador_unique ON gerador (bola1, bola2, bola3, bola4, bola5, bola6)`
-    );
+    try {
+      await db.execute(
+        `CREATE UNIQUE INDEX IF NOT EXISTS idx_gerador_unique ON gerador (bola1, bola2, bola3, bola4, bola5, bola6)`
+      );
+    } catch (error) {
+      if (!("code" in (error as any) && (error as any).code === "SQLITE_CONSTRAINT")) {
+        throw error;
+      }
+    }
   } catch (error) {
     if (
       !("code" in (error as any) && (error as any).code === "BLOCKED") &&
