@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import ServiceWorker from "../components/ServiceWorker";
-import { Analytics } from "@vercel/analytics/next"
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { SITE_URL } from "@/lib/constants";
 
 import "./globals.css";
 
@@ -17,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://gerasena.com"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Gerasena",
     template: "%s | Gerasena",
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Gerasena",
     description: "Gere Jogos da Mega-Sena",
-    url: "https://gerasena.com",
+    url: SITE_URL,
     siteName: "Gerasena",
     locale: "pt_BR",
     type: "website",
@@ -47,7 +48,7 @@ export const metadata: Metadata = {
     images: ["/logo.png"],
   },
   alternates: {
-    canonical: "https://gerasena.com",
+    canonical: SITE_URL,
   },
   robots: {
     index: true,
