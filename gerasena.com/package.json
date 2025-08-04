@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "scrape:mega-sena": "node scripts/mega-sena-cron.js",
+    "scrape:mega-sena": "ts-node scripts/mega-sena-cron.ts",
     "seed:turso": "node scripts/seed-turso.js",
     "seed:history": "node scripts/populate-history.js"
   },
@@ -33,6 +33,7 @@
     "eslint": "^9.32.0",
     "eslint-config-next": "^15.4.5",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }
