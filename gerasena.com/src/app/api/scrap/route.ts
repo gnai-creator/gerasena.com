@@ -35,24 +35,15 @@ export async function GET() {
       bola6 INT
     )`);
 
-    await db.execute({
-      sql: `INSERT OR IGNORE INTO history (
-              concurso,
-              data,
-              bola1,
-              bola2,
-              bola3,
-              bola4,
-              bola5,
-              bola6
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      args: [concurso, drawDate, b1, b2, b3, b4, b5, b6],
+    const existing = await db.execute({
+      sql: `SELECT concurso FROM history WHERE concurso = ?`,
+      args: [concurso],
     });
 
     if (existing.rows.length === 0) {
       await db.execute({
         sql: `INSERT INTO history (concurso, data, bola1, bola2, bola3, bola4, bola5, bola6)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?)` ,
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         args: [concurso, drawDate, b1, b2, b3, b4, b5, b6],
       });
       // New draw inserted, refresh cache
