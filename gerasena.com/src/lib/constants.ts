@@ -3,7 +3,7 @@
 
 // Quantidade de jogos que serão analisados pela IA para prever as
 // características dos jogos passados.
-export const QTD_HIST = 200;
+export const QTD_HIST = 50;
 
 // Quantidade de jogos a serem gerados pelo algoritmo genético.
 export const QTD_GERAR = 100;
