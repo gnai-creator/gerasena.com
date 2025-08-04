@@ -292,7 +292,9 @@ export interface FeatureResult {
   histFreq: number[];
   prevDraw: number[];
   histPos: number[];
-  [key: string]: number | [number, number] | number[];
+  /** Historical min/max range for draw sums */
+  sumRange?: [number, number];
+  [key: string]: number | [number, number] | number[] | undefined;
 }
 
 export async function analyzeHistorico(
