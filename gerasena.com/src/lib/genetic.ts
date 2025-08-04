@@ -1,5 +1,6 @@
 import { FEATURES } from "./features";
 import type { FeatureResult } from "./historico";
+import { SUM_TOLERANCE } from "./constants";
 
 const PRIMES = new Set([
   2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59,
@@ -202,9 +203,21 @@ function gameKey(game: number[]): string {
 export function generateGames(
   _features: FeatureResult,
   populationSize = 100,
-  generations = 50
+  generations = 50,
+  sumTolerance = SUM_TOLERANCE
 ): number[][] {
-  const sumRange = Array.isArray(_features.sum) ? _features.sum : null;
+  let sumRange: [number, number] | null = null;
+  if (typeof _features.sum === "number") {
+    sumRange = [
+      _features.sum - sumTolerance,
+      _features.sum + sumTolerance,
+    ];
+  } else if (Array.isArray(_features.sum)) {
+    sumRange = [
+      _features.sum[0] - sumTolerance,
+      _features.sum[1] + sumTolerance,
+    ];
+  }
   const population: number[][] = [];
   const seen = new Set<string>();
   let attempts = 0;
