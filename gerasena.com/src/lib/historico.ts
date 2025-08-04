@@ -2,7 +2,6 @@ import { db } from "./db";
 import { FEATURES } from "./features";
 import { QTD_HIST } from "./constants";
 import type * as tfTypes from "@tensorflow/tfjs";
-import { promises as fs } from "fs";
 import path from "path";
 
 export interface Draw {
@@ -51,6 +50,7 @@ async function getHistoricoFromCsv(
   desc = true
 ): Promise<Draw[]> {
   const csvPath = path.join(process.cwd(), "public", "mega-sena.csv");
+  const fs = await import("fs/promises");
   const file = await fs.readFile(csvPath, "utf8");
   let draws: Draw[] = file
     .trim()
