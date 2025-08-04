@@ -27,16 +27,20 @@ function AutomaticoContent() {
       );
       const latest: Draw[] = await latestRes.json();
       const lastConcurso = latest[0]?.concurso;
-      const before = lastConcurso;
+      const before = baseConcurso ?? lastConcurso;
 
       const featuresRes = await fetch(
-        `/api/analyze${before ? `?before=${before}` : ""}`
+        `/api/analyze${
+          before !== undefined ? `?before=${before}` : ""
+        }`
       );
       const features: FeatureResult = await featuresRes.json();
       const generations = qtdGerar > 5000 ? 80 : 50;
       const games = generateGames(features, qtdGerar, generations, seed);
       const res = await fetch(
-        `/api/historico?limit=${QTD_HIST}${before ? `&before=${before}` : ""}`
+        `/api/historico?limit=${QTD_HIST}${
+          before !== undefined ? `&before=${before}` : ""
+        }`
       );
       const draws: Draw[] = await res.json();
       const history = draws.map((d) => [
