@@ -38,7 +38,7 @@ function probabilidadeEsperada(acertos: number): number {
 }
 
 function calcularPontuacao(freq: number[]): number {
-  return freq[4] * 10 + freq[5] * 50 + freq[6] * 200;
+  return freq[3] * 3 + freq[4] * 10 + freq[5] * 50 + freq[6] * 200;
 }
 
 export default function Arquivo() {
@@ -70,8 +70,9 @@ export default function Arquivo() {
       for (const n of g) allNums.add(n);
     }
 
-    const expectedBase = Array.from({ length: 7 }, (_, hits) =>
-      probabilidadeEsperada(hits) * games.length
+    const expectedBase = Array.from(
+      { length: 7 },
+      (_, hits) => probabilidadeEsperada(hits) * games.length
     );
     const expectedScoreBase = calcularPontuacao(expectedBase);
 
@@ -168,8 +169,8 @@ export default function Arquivo() {
               </tbody>
             </table>
             <p className="mt-2 text-sm">
-              Pontuação: {r.score.toFixed(2)} (esperado {r.expectedScore.toFixed(2)}) —
-              {" "}
+              Pontuação: {r.score.toFixed(2)} (esperado{" "}
+              {r.expectedScore.toFixed(2)}) —{" "}
               {r.score > r.expectedScore
                 ? "Acima da expectativa."
                 : r.score < r.expectedScore
