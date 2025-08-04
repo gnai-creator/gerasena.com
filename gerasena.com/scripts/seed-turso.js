@@ -29,8 +29,13 @@ async function seed() {
     bola4 INT,
     bola5 INT,
     bola6 INT,
+    target TEXT,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   )`);
+
+  await db.execute(
+    `CREATE UNIQUE INDEX IF NOT EXISTS idx_gerador_unique ON gerador (bola1, bola2, bola3, bola4, bola5, bola6)`
+  );
 
   const lines = fs.readFileSync(CSV_PATH, 'utf8').trim().split('\n').slice(1);
   for (const line of lines) {

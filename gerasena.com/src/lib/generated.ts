@@ -35,6 +35,11 @@ async function ensureTable(): Promise<void> {
     } catch {
       // ignore errors from stubbed db clients
     }
+
+    // ensure uniqueness across all six number columns
+    await db.execute(
+      `CREATE UNIQUE INDEX IF NOT EXISTS idx_gerador_unique ON gerador (bola1, bola2, bola3, bola4, bola5, bola6)`
+    );
   } catch (error) {
     if (
       !("code" in (error as any) && (error as any).code === "BLOCKED") &&
@@ -62,15 +67,8 @@ export async function saveGenerated(
   if (unique.length !== 6) return;
 
   try {
-    // Evitar inserir jogos já existentes
-    const exists = await db.execute({
-      sql: `SELECT 1 FROM gerador WHERE bola1 = ? AND bola2 = ? AND bola3 = ? AND bola4 = ? AND bola5 = ? AND bola6 = ? LIMIT 1`,
-      args: unique,
-    });
-    if ((exists.rows as unknown[]).length) return;
-
     await db.execute({
-      sql: `INSERT INTO gerador (bola1, bola2, bola3, bola4, bola5, bola6, target, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
+      sql: `INSERT OR IGNORE INTO gerador (bola1, bola2, bola3, bola4, bola5, bola6, target, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
       args: [...unique, target ?? null],
     });
   } catch (error) {
