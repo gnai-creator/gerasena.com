@@ -37,20 +37,24 @@ export default function FallingLogosBackground() {
       const logos: import("three").Sprite[] = [];
       const LOGO_COUNT = 20;
 
+      function randomizeLogo(sprite: import("three").Sprite) {
+        const size = 32 + Math.random() * 96;
+        sprite.scale.set(size, size, 1);
+        sprite.userData = {
+          vy: 0.5 + Math.random() * 2,
+          rot: (Math.random() - 0.5) * 0.02,
+        };
+      }
+
       function createLogo() {
         const material = new THREE.SpriteMaterial({ map: logoTexture });
         const sprite = new THREE.Sprite(material);
-        const size = 64;
-        sprite.scale.set(size, size, 1);
+        randomizeLogo(sprite);
         sprite.position.set(
           Math.random() * width - width / 2,
           height / 2 + Math.random() * height,
           0,
         );
-        sprite.userData = {
-          vy: 1 + Math.random() * 2,
-          rot: (Math.random() - 0.5) * 0.02,
-        };
         scene.add(sprite);
         logos.push(sprite);
       }
@@ -67,6 +71,7 @@ export default function FallingLogosBackground() {
           if (logo.position.y < -height / 2 - 100) {
             logo.position.y = height / 2 + Math.random() * height;
             logo.position.x = Math.random() * width - width / 2;
+            randomizeLogo(logo);
           }
         });
         renderer!.render(scene, camera);
