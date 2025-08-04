@@ -5,7 +5,7 @@ export const QTD_HIST = 100;
 export const QTD_GERAR = 100;
 
 // Limite máximo de jogos que podem ser gerados pelo usuário.
-export const QTD_GERAR_MAX = 1000;
+export const QTD_GERAR_MAX = 10000;
 
 
 export const SITE_URL = "https://gerasena.com";
