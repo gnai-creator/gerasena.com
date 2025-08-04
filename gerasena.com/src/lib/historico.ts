@@ -239,6 +239,7 @@ export async function analyzeHistorico(
   };
   FEATURES.forEach((f) => (result[f] = 0));
   const historico = await getHistorico(QTD_HIST, 0, before);
+  console.log("analyzing historico with", historico.length, "draws");
   if (historico.length < 2) return result;
 
   const draws = [...historico].reverse();
@@ -270,18 +271,19 @@ export async function analyzeHistorico(
   }
 
   const sums = featureVectors.map((v) => v[0]);
-  const sumRange: [number, number] = [
-    Math.min(...sums),
-    Math.max(...sums),
-  ];
+  const sumRange: [number, number] = [Math.min(...sums), Math.max(...sums)];
 
   const xs = tf.tensor2d(featureVectors.slice(0, -1));
   const ys = tf.tensor2d(featureVectors.slice(1));
   const model = tf.sequential();
   model.add(
-    tf.layers.dense({ inputShape: [FEATURES.length], units: 32, activation: "relu" })
+    tf.layers.dense({
+      inputShape: [FEATURES.length],
+      units: 32,
+      activation: "relu",
+    })
   );
-  
+
   model.add(tf.layers.dense({ units: 64, activation: "relu" }));
   model.add(tf.layers.dense({ units: 128, activation: "relu" }));
   model.add(tf.layers.dropout({ rate: 0.2 }));
