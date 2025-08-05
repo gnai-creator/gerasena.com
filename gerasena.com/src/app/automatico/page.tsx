@@ -10,10 +10,16 @@ function AutomaticoContent() {
   const searchParams = useSearchParams();
   const concursoParam = searchParams.get("concurso");
   const baseConcurso = concursoParam ? parseInt(concursoParam, 10) : undefined;
-  const qtdParam = searchParams.get("qtd");
-  const qtdGerar = qtdParam
-    ? Math.min(Math.max(parseInt(qtdParam, 10), 1), QTD_GERAR_MAX)
+  const populationParam = searchParams.get("populationSize") ?? searchParams.get("qtd");
+  const populationSize = populationParam
+    ? Math.min(Math.max(parseInt(populationParam, 10), 1), QTD_GERAR_MAX)
     : QTD_GERAR;
+  const generationsParam = searchParams.get("generations");
+  const generations = generationsParam
+    ? Math.max(parseInt(generationsParam, 10), 1)
+    : populationSize > 5000
+      ? 80
+      : 50;
   const seed = searchParams.get("seed") || undefined;
   const mutationParam = searchParams.get("mutationRate");
   const mutationRate = mutationParam ? parseFloat(mutationParam) : 0.1;
@@ -32,14 +38,12 @@ function AutomaticoContent() {
 
       const featuresRes = await fetch(`/api/analyze?before=${before}`);
       const features: FeatureResult = await featuresRes.json();
-      const generations = qtdGerar > 5000 ? 80 : 50;
-      const games = generateGames(
-        features,
-        qtdGerar,
+      const games = generateGames(features, {
+        populationSize,
         generations,
         seed,
-        mutationRate
-      );
+        mutationRate,
+      });
       const res = await fetch(
         `/api/historico?limit=${QTD_HIST}&before=${before}`
       );
@@ -69,7 +73,7 @@ function AutomaticoContent() {
       router.push("/resultado");
     }
     run();
-  }, [router, baseConcurso, qtdGerar, seed, mutationRate]);
+  }, [router, baseConcurso, populationSize, generations, seed, mutationRate]);
 
   return (
     <main className="flex min-h-screen items-center justify-center">
