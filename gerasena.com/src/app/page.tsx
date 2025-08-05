@@ -7,13 +7,17 @@ import FallingLogosBackground from "@/components/FallingLogosBackground";
 
 export default function Home() {
   const [concurso, setConcurso] = useState("");
-  const [qtd, setQtd] = useState("");
-  const [mutation, setMutation] = useState("");
+  const [qtd, setQtd] = useState("1000");
+  const [mutation, setMutation] = useState("0.25");
+  const [population, setPopulation] = useState("200");
+  const [generations, setGenerations] = useState("100");
 
   const params = new URLSearchParams();
   if (concurso) params.set("concurso", concurso);
   if (qtd) params.set("qtd", qtd);
   if (mutation) params.set("mutation", mutation);
+  if (population) params.set("population", population);
+  if (generations) params.set("generations", generations);
   const query = params.toString();
 
   return (
@@ -64,6 +68,40 @@ export default function Home() {
             className="rounded border px-4 py-2 bg-black text-white"
             min={0.0}
             max={1.0}
+          />
+          <input
+            type="number"
+            value={population}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (!val) {
+                setPopulation("200");
+              } else {
+                const num = Math.min(parseInt(val, 10), 1000);
+                setPopulation(num.toString());
+              }
+            }}
+            placeholder="Tamanho da população"
+            className="rounded border px-4 py-2 bg-black text-white"
+            min={1}
+            max={1000}
+          />
+          <input
+            type="number"
+            value={generations}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (!val) {
+                setGenerations("100");
+              } else {
+                const num = Math.min(parseInt(val, 10), 1000);
+                setGenerations(num.toString());
+              }
+            }}
+            placeholder="Gerações"
+            className="rounded border px-4 py-2 bg-black text-white"
+            min={1}
+            max={1000}
           />
           <Link
             href={`/automatico${query ? `?${query}` : ""}`}
