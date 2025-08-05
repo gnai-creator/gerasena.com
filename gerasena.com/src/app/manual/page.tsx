@@ -27,6 +27,8 @@ function ManualContent() {
     : QTD_GERAR;
   const seedParam = searchParams.get("seed") || "";
   const [seed, setSeed] = useState(seedParam);
+  const mutationParam = searchParams.get("mutationRate") || "0.1";
+  const [mutationRate, setMutationRate] = useState(parseFloat(mutationParam));
 
   const toggle = (f: string) => {
     setSelected((prev) => {
@@ -59,7 +61,8 @@ function ManualContent() {
         features,
         qtdGerar,
         generations,
-        seed || undefined
+        seed || undefined,
+        mutationRate
       );
       const res = await fetch(
         `/api/historico?limit=${QTD_HIST}${
@@ -112,6 +115,16 @@ function ManualContent() {
         value={seed}
         onChange={(e) => setSeed(e.target.value)}
         placeholder="Semente (opcional)"
+        className="rounded border px-2 py-1"
+      />
+      <input
+        type="number"
+        step="0.01"
+        min="0"
+        max="1"
+        value={mutationRate}
+        onChange={(e) => setMutationRate(parseFloat(e.target.value))}
+        placeholder="Taxa de mutação"
         className="rounded border px-2 py-1"
       />
       <button
