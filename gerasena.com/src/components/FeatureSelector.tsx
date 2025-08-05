@@ -2,9 +2,9 @@
 
 interface Props {
   features: string[];
-  selected: Record<string, number | [number, number]>;
+  selected: Record<string, [number, number]>;
   onToggle: (feature: string) => void;
-  onChange: (feature: string, value: number | [number, number]) => void;
+  onChange: (feature: string, value: [number, number]) => void;
 }
 
 import { FEATURE_INFO } from "@/lib/features";
@@ -13,10 +13,9 @@ export function FeatureSelector({ features, selected, onToggle, onChange }: Prop
   return (
     <div className="grid grid-cols-1 gap-2">
       {features.map((f) => {
-        const isRange = f === "sum";
         const active = f in selected;
         const value = selected[f];
-        const [min, max] = Array.isArray(value) ? value : ["", ""];
+        const [min, max] = value ?? ["", ""];
         return (
           <div key={f} className="flex items-center gap-2">
             <input
@@ -36,37 +35,27 @@ export function FeatureSelector({ features, selected, onToggle, onChange }: Prop
             >
               i
             </button>
-            {isRange ? (
-              <div className="ml-auto flex items-center gap-1">
-                <input
-                  type="number"
-                  className="w-20 rounded border px-1 py-0.5"
-                  value={min as number | string}
-                  disabled={!active}
-                  onChange={(e) =>
-                    onChange(f, [Number(e.target.value), Number(max || 0)])
-                  }
-                />
-                <span>-</span>
-                <input
-                  type="number"
-                  className="w-20 rounded border px-1 py-0.5"
-                  value={max as number | string}
-                  disabled={!active}
-                  onChange={(e) =>
-                    onChange(f, [Number(min || 0), Number(e.target.value)])
-                  }
-                />
-              </div>
-            ) : (
+            <div className="ml-auto flex items-center gap-1">
               <input
                 type="number"
-                className="ml-auto w-20 rounded border px-1 py-0.5"
-                value={(value as number) ?? ""}
+                className="w-20 rounded border px-1 py-0.5"
+                value={min as number | string}
                 disabled={!active}
-                onChange={(e) => onChange(f, Number(e.target.value))}
+                onChange={(e) =>
+                  onChange(f, [Number(e.target.value), Number(max || 0)])
+                }
               />
-            )}
+              <span>-</span>
+              <input
+                type="number"
+                className="w-20 rounded border px-1 py-0.5"
+                value={max as number | string}
+                disabled={!active}
+                onChange={(e) =>
+                  onChange(f, [Number(min || 0), Number(e.target.value)])
+                }
+              />
+            </div>
           </div>
         );
       })}

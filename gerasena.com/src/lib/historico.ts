@@ -285,7 +285,7 @@ export async function analyzeHistorico(
     prevDraw: [],
     histPos: [],
   };
-  FEATURES.forEach((f) => (result[f] = 0));
+  FEATURES.forEach((f) => (result[f] = [0, 0]));
   const historico = await getCachedHistorico(QTD_HIST, 0, before);
   console.log("analyzing historico with", historico.length, "draws");
   if (historico.length < 2) return result;
@@ -322,6 +322,26 @@ export async function analyzeHistorico(
 
   const sumRange: [number, number] = [Math.min(...sums), Math.max(...sums)];
 
+  const featureCount = FEATURES.length;
+  const means = Array(featureCount).fill(0);
+  featureVectors.forEach((vec) => {
+    vec.forEach((v, i) => {
+      means[i] += v;
+    });
+  });
+  means.forEach((_, i) => {
+    means[i] /= featureVectors.length;
+  });
+  const stds = Array(featureCount).fill(0);
+  featureVectors.forEach((vec) => {
+    vec.forEach((v, i) => {
+      stds[i] += (v - means[i]) ** 2;
+    });
+  });
+  stds.forEach((s, i) => {
+    stds[i] = Math.sqrt(s / featureVectors.length);
+  });
+
   const xs = tf.tensor2d(featureVectors.slice(0, -1));
   const ys = tf.tensor2d(featureVectors.slice(1));
   const model = tf.sequential();
@@ -344,7 +364,9 @@ export async function analyzeHistorico(
   const values = Array.from(prediction.dataSync());
 
   FEATURES.forEach((f, i) => {
-    result[f] = values[i];
+    const min = values[i] - stds[i];
+    const max = values[i] + stds[i];
+    result[f] = [min, max];
   });
   // Store the historical min/max range of sums separately for potential use.
   result.sumRange = sumRange;
