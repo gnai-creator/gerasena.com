@@ -2,9 +2,6 @@
 // import { computeFeatures } from "./genetic";
 
 export const FEATURES = [
-  "sum",
-  "mean",
-  "median",
   "mode_hist",
   "range",
   "std",
@@ -19,13 +16,10 @@ export const FEATURES = [
   "repeat_prev",
   "repeat_hist",
   "avg_hist_freq",
-  "sum_digits",
   "last_digit_counts",
   "avg_hist_position",
   "tens_group_counts",
   "mirror_numbers",
-  "sum_odd_positions",
-  "sum_even_positions",
   "hot_cold_balance",
 ];
 
@@ -33,19 +27,6 @@ export const FEATURE_INFO: Record<
   string,
   { label: string; description: string }
 > = {
-  sum: {
-    label: "Soma",
-    description:
-      "Soma de todos os números escolhidos. Pode ser usada com um valor alvo e uma tolerância configurável.",
-  },
-  mean: {
-    label: "Média",
-    description: "Média aritmética dos números escolhidos.",
-  },
-  median: {
-    label: "Mediana",
-    description: "Valor central dos números em ordem.",
-  },
   mode_hist: {
     label: "Moda histórica",
     description: "Número que mais apareceu nos sorteios anteriores.",
@@ -102,10 +83,6 @@ export const FEATURE_INFO: Record<
     label: "Freq. histórica média",
     description: "Média de frequência histórica dos números.",
   },
-  sum_digits: {
-    label: "Soma dos dígitos",
-    description: "Soma dos dígitos de cada número.",
-  },
   last_digit_counts: {
     label: "Dígitos finais",
     description: "Distribuição dos dígitos finais.",
@@ -121,14 +98,6 @@ export const FEATURE_INFO: Record<
   mirror_numbers: {
     label: "Números espelhados",
     description: "Quantidade de pares espelhados no jogo, como 12 e 21.",
-  },
-  sum_odd_positions: {
-    label: "Soma posições ímpares",
-    description: "Soma dos números que ocupam posições ímpares no jogo.",
-  },
-  sum_even_positions: {
-    label: "Soma posições pares",
-    description: "Soma dos números que ocupam posições pares no jogo.",
   },
   hot_cold_balance: {
     label: "Balanceamento quente/frio",
