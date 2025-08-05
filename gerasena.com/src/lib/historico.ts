@@ -162,13 +162,9 @@ function computeFeatures(
 ): number[] {
   const sorted = [...game].sort((a, b) => a - b);
   const sum = sorted.reduce((a, b) => a + b, 0);
-  const mean = sum / sorted.length;
-  const median = (sorted[2] + sorted[3]) / 2;
   const modeHist = Math.max(...sorted.map((n) => histFreq[n - 1]));
   const range = sorted[sorted.length - 1] - sorted[0];
-  const sd = Math.sqrt(
-    sorted.reduce((acc, n) => acc + (n - mean) ** 2, 0) / sorted.length
-  );
+  const sd = std(sorted);
   const evenCount = sorted.filter((n) => n % 2 === 0).length;
   const percEven = (evenCount / sorted.length) * 100;
   const percOdd = 100 - percEven;
@@ -191,15 +187,6 @@ function computeFeatures(
   const repeatHist = sorted.filter((n) => histFreq[n - 1] > 0).length;
   const avgHistFreq =
     sorted.reduce((acc, n) => acc + histFreq[n - 1], 0) / sorted.length;
-  const sumDigits = sorted.reduce(
-    (acc, n) =>
-      acc +
-      n
-        .toString()
-        .split("")
-        .reduce((a, d) => a + parseInt(d, 10), 0),
-    0
-  );
   const lastDigitCounts = Array(10).fill(0);
   sorted.forEach((n) => lastDigitCounts[n % 10]++);
   const lastDigitStd = std(lastDigitCounts);
@@ -220,13 +207,6 @@ function computeFeatures(
       mirrorCount++;
     }
   });
-
-  const sumOddPositions = sorted
-    .filter((_n, i) => i % 2 === 0)
-    .reduce((a, b) => a + b, 0);
-  const sumEvenPositions = sorted
-    .filter((_n, i) => i % 2 === 1)
-    .reduce((a, b) => a + b, 0);
 
   const freqPairs = histFreq.map((freq, i) => ({ num: i + 1, freq }));
   const hotNumbers = new Set(
@@ -261,8 +241,6 @@ function computeFeatures(
 
   return [
     sum,
-    mean,
-    median,
     modeHist,
     range,
     sd,
@@ -277,13 +255,10 @@ function computeFeatures(
     repeatPrev,
     repeatHist,
     avgHistFreq,
-    sumDigits,
     lastDigitStd,
     avgHistPos,
     tensGroupStd,
     mirrorCount,
-    sumOddPositions,
-    sumEvenPositions,
     hotColdBalance,
   ];
 }
@@ -318,6 +293,7 @@ export async function analyzeHistorico(
   const posSum = Array(60).fill(0);
   const posCount = Array(60).fill(0);
   const featureVectors: number[][] = [];
+  const sums: number[] = [];
   let prevDraw: number[] = [];
 
   for (const draw of draws) {
@@ -330,8 +306,9 @@ export async function analyzeHistorico(
       draw.bola6,
     ];
     const histPos = posSum.map((s, i) => (posCount[i] ? s / posCount[i] : 0));
-    const feats = computeFeatures(nums, freq, prevDraw, histPos);
+    const [sum, ...feats] = computeFeatures(nums, freq, prevDraw, histPos);
     featureVectors.push(feats);
+    sums.push(sum);
 
     nums.forEach((n, idx) => {
       freq[n - 1]++;
@@ -341,7 +318,6 @@ export async function analyzeHistorico(
     prevDraw = nums;
   }
 
-  const sums = featureVectors.map((v) => v[0]);
   const sumRange: [number, number] = [Math.min(...sums), Math.max(...sums)];
 
   const xs = tf.tensor2d(featureVectors.slice(0, -1));
@@ -376,8 +352,7 @@ export async function analyzeHistorico(
   FEATURES.forEach((f, i) => {
     result[f] = values[i];
   });
-  // Preserve the predicted sum value from the neural network in `result.sum`.
-  // Store the historical min/max range separately for potential use.
+  // Store the historical min/max range of sums separately for potential use.
   result.sumRange = sumRange;
 
   const histPos = posSum.map((s, i) => (posCount[i] ? s / posCount[i] : 0));

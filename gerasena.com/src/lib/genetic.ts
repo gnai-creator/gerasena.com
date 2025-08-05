@@ -64,9 +64,6 @@ export function computeFeatures(
   histPos: number[]
 ): Record<string, number> {
   const sorted = [...game].sort((a, b) => a - b);
-  const sum = sorted.reduce((a, b) => a + b, 0);
-  const mean = sum / sorted.length;
-  const median = (sorted[2] + sorted[3]) / 2;
   const modeHist = Math.max(...sorted.map((n) => histFreq[n - 1] || 0));
   const range = sorted[sorted.length - 1] - sorted[0];
   const sd = std(sorted);
@@ -92,15 +89,6 @@ export function computeFeatures(
   const repeatHist = sorted.filter((n) => (histFreq[n - 1] || 0) > 0).length;
   const avgHistFreq =
     sorted.reduce((acc, n) => acc + (histFreq[n - 1] || 0), 0) / sorted.length;
-  const sumDigits = sorted.reduce(
-    (acc, n) =>
-      acc +
-      n
-        .toString()
-        .split("")
-        .reduce((a, d) => a + parseInt(d, 10), 0),
-    0
-  );
   const lastDigitCounts = Array(10).fill(0);
   sorted.forEach((n) => lastDigitCounts[n % 10]++);
   const lastDigitStd = std(lastDigitCounts);
@@ -121,13 +109,6 @@ export function computeFeatures(
       mirrorCount++;
     }
   });
-
-  const sumOddPositions = sorted
-    .filter((_n, i) => i % 2 === 0)
-    .reduce((a, b) => a + b, 0);
-  const sumEvenPositions = sorted
-    .filter((_n, i) => i % 2 === 1)
-    .reduce((a, b) => a + b, 0);
 
   const freqPairs = histFreq.map((freq, i) => ({ num: i + 1, freq }));
   const hotNumbers = new Set(
@@ -161,9 +142,6 @@ export function computeFeatures(
   const hotColdBalance = hotAvg - coldAvg;
 
   return {
-    sum,
-    mean,
-    median,
     mode_hist: modeHist,
     range,
     std: sd,
@@ -178,13 +156,10 @@ export function computeFeatures(
     repeat_prev: repeatPrev,
     repeat_hist: repeatHist,
     avg_hist_freq: avgHistFreq,
-    sum_digits: sumDigits,
     last_digit_counts: lastDigitStd,
     avg_hist_position: avgHistPos,
     tens_group_counts: tensGroupStd,
     mirror_numbers: mirrorCount,
-    sum_odd_positions: sumOddPositions,
-    sum_even_positions: sumEvenPositions,
     hot_cold_balance: hotColdBalance,
   };
 }
@@ -198,7 +173,6 @@ function fitness(game: number[], features: FeatureResult): number {
   );
   let error = 0;
   for (const f of FEATURES) {
-    if (f === "sum") continue;
     const target = features[f];
     if (typeof target === "number") {
       const diff = values[f] - target;

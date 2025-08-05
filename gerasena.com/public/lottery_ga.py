@@ -5,27 +5,23 @@ Genetic Algorithms. Each combination (game) consists of 6 unique numbers
 between 1 and 60. The algorithm evolves an initial random population to
 approximate user-specified statistical characteristics.
 
-The 20 characteristics considered are:
-1. Sum of numbers
-2. Arithmetic mean
-3. Median
-4. Historical mode (max frequency in historical data)
-5. Range (max - min)
-6. Standard deviation
-7. Percentage of even numbers
-8. Percentage of odd numbers
-9. Percentage of primes
-10. Frequency per quadrant (1-15,16-30,31-45,46-60)
-11. Count of sequential number pairs
-12. Average distance between consecutive numbers
-13. Minimum distance between consecutive numbers
-14. Maximum distance between consecutive numbers
-15. Count of numbers repeated from previous draw
-16. Average historical frequency of numbers
-17. Sum of digits of numbers
-18. Frequency of last digits (0-9)
-19. Average historical position of numbers
-20. Frequency per tens group (1-10,...,51-60)
+The 16 characteristics considered are:
+1. Historical mode (max frequency in historical data)
+2. Range (max - min)
+3. Standard deviation
+4. Percentage of even numbers
+5. Percentage of odd numbers
+6. Percentage of primes
+7. Frequency per quadrant (1-15,16-30,31-45,46-60)
+8. Count of sequential number pairs
+9. Average distance between consecutive numbers
+10. Minimum distance between consecutive numbers
+11. Maximum distance between consecutive numbers
+12. Count of numbers repeated from previous draw
+13. Average historical frequency of numbers
+14. Frequency of last digits (0-9)
+15. Average historical position of numbers
+16. Frequency per tens group (1-10,...,51-60)
 
 The script can optionally receive a JSON file with desired feature values.
 If not provided, a random target is generated for demonstration purposes.
@@ -60,15 +56,6 @@ PRIMES = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59}
 # -------------------------------------
 # Feature calculation helpers
 # -------------------------------------
-
-def feature_sum(game: Sequence[int]) -> int:
-    return int(sum(game))
-
-def feature_mean(game: Sequence[int]) -> float:
-    return float(np.mean(game))
-
-def feature_median(game: Sequence[int]) -> float:
-    return float(np.median(game))
 
 def feature_historical_mode(game: Sequence[int], hist_freq: Sequence[int]) -> int:
     return max(hist_freq[n - 1] for n in game)
@@ -125,9 +112,6 @@ def feature_repetition_prev(game: Sequence[int], prev_draw: Sequence[int]) -> in
 def feature_avg_hist_freq(game: Sequence[int], hist_freq: Sequence[int]) -> float:
     return float(np.mean([hist_freq[n - 1] for n in game]))
 
-def feature_sum_digits(game: Sequence[int]) -> int:
-    return sum(sum(int(d) for d in str(n)) for n in game)
-
 def feature_last_digit_freq(game: Sequence[int]) -> List[int]:
     counts = [0] * 10
     for n in game:
@@ -145,9 +129,6 @@ def feature_tens_group(game: Sequence[int]) -> List[int]:
 
 # Mapping of feature names to functions
 FEATURE_FUNCTIONS = {
-    "sum": lambda g, h: feature_sum(g),
-    "mean": lambda g, h: feature_mean(g),
-    "median": lambda g, h: feature_median(g),
     "mode_hist": lambda g, h: feature_historical_mode(g, h.freq),
     "range": lambda g, h: feature_range(g),
     "std": lambda g, h: feature_std(g),
@@ -161,7 +142,6 @@ FEATURE_FUNCTIONS = {
     "max_distance": lambda g, h: feature_max_distance(g),
     "repeat_prev": lambda g, h: feature_repetition_prev(g, h.prev_draw),
     "avg_hist_freq": lambda g, h: feature_avg_hist_freq(g, h.freq),
-    "sum_digits": lambda g, h: feature_sum_digits(g),
     "last_digit_counts": lambda g, h: feature_last_digit_freq(g),
     "avg_hist_position": lambda g, h: feature_hist_avg_position(g, h.position),
     "tens_group_counts": lambda g, h: feature_tens_group(g),
