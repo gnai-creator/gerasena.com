@@ -16,9 +16,7 @@ const GROUPS = Array.from(
 
 function ManualContent() {
   const [step, setStep] = useState(0);
-  const [selected, setSelected] = useState<
-    Record<string, number | [number, number]>
-  >({});
+  const [selected, setSelected] = useState<Record<string, [number, number]>>({});
   const router = useRouter();
   const searchParams = useSearchParams();
   const concursoParam = searchParams.get("concurso");
@@ -36,13 +34,13 @@ function ManualContent() {
       if (f in next) {
         delete next[f];
       } else {
-        next[f] = f === "sum" ? [0, 0] : 0;
+        next[f] = [0, 0];
       }
       return next;
     });
   };
 
-  const setValue = (f: string, value: number | [number, number]) => {
+  const setValue = (f: string, value: [number, number]) => {
     setSelected((prev) => ({ ...prev, [f]: value }));
   };
 

@@ -173,10 +173,16 @@ function fitness(game: number[], features: FeatureResult): number {
   );
   let error = 0;
   for (const f of FEATURES) {
-    const target = features[f];
-    if (typeof target === "number") {
-      const diff = values[f] - target;
-      error += diff * diff;
+    const range = features[f];
+    if (Array.isArray(range)) {
+      const value = values[f];
+      if (value < range[0]) {
+        const diff = range[0] - value;
+        error += diff * diff;
+      } else if (value > range[1]) {
+        const diff = value - range[1];
+        error += diff * diff;
+      }
     }
   }
   return -error;
