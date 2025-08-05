@@ -24,8 +24,12 @@ export default function Resultado() {
     const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
+    const concurso = sessionStorage.getItem("concurso") || "0";
+    const data =
+      sessionStorage.getItem("concursoDate") ||
+      new Date().toISOString().slice(0, 10);
     a.href = url;
-    a.download = "jogos.txt";
+    a.download = `concurso_${concurso}_${data}.txt`;
     a.click();
     URL.revokeObjectURL(url);
   }

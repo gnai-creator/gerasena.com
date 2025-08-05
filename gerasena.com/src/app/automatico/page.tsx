@@ -52,6 +52,11 @@ function AutomaticoContent() {
           body: JSON.stringify({ numbers: g.numbers, target: String(before) }),
         });
       }
+      sessionStorage.setItem("concurso", String(before));
+      sessionStorage.setItem(
+        "concursoDate",
+        new Date().toISOString().slice(0, 10)
+      );
       sessionStorage.setItem("results", JSON.stringify(evaluated));
       router.push("/resultado");
     }
