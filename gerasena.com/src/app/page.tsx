@@ -8,10 +8,12 @@ import FallingLogosBackground from "@/components/FallingLogosBackground";
 export default function Home() {
   const [concurso, setConcurso] = useState("");
   const [qtd, setQtd] = useState("");
+  const [mutation, setMutation] = useState("");
 
   const params = new URLSearchParams();
   if (concurso) params.set("concurso", concurso);
   if (qtd) params.set("qtd", qtd);
+  if (mutation) params.set("mutation", mutation);
   const query = params.toString();
 
   return (
@@ -46,12 +48,23 @@ export default function Home() {
             min={1}
             max={QTD_GERAR_MAX}
           />
-          <Link
-            href={`/manual${query ? `?${query}` : ""}`}
-            className="rounded bg-blue-600 px-4 py-2 text-white text-center hover:bg-blue-700"
-          >
-            Manual
-          </Link>
+        <input
+            type="number"
+            value={qtd}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (!val) {
+                setMutation("");
+              } else {
+                const num = Math.min(parseInt(val, 10), 1.0);
+                setMutation(num.toString());
+              }
+            }}
+            placeholder="Taxa de mutação (0.0 - 1.0)"
+            className="rounded border px-4 py-2 bg-black text-white"
+            min={0}
+            max={1}
+          />
           <Link
             href={`/automatico${query ? `?${query}` : ""}`}
             className="rounded bg-green-600 px-4 py-2 text-white text-center hover:bg-green-700"
