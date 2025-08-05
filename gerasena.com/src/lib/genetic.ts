@@ -33,13 +33,15 @@ function randomGame(rng: () => number, allowed: number[]): number[] {
   return uniqueGame(Array.from(set));
 }
 
-function crossover(
+export function crossover(
   rng: () => number,
   a: number[],
   b: number[],
   allowed: number[]
 ): number[] {
-  const set = new Set([...a.slice(0, 3), ...b.slice(3)]);
+  const point = rand(rng, 1, 5);
+  const genes = [...a.slice(0, point), ...b.slice(point)];
+  const set = new Set(genes.filter((n) => allowed.includes(n)));
   while (set.size < 6) {
     set.add(allowed[rand(rng, 0, allowed.length - 1)]);
   }
