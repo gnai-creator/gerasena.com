@@ -334,14 +334,11 @@ export async function analyzeHistorico(
   );
 
   model.add(tf.layers.dense({ units: 64, activation: "relu" }));
-  model.add(tf.layers.dropout({ rate: 0.2 }));
-  model.add(tf.layers.dense({ units: 128, activation: "relu" }));
-  model.add(tf.layers.dense({ units: 64, activation: "relu" }));
-  model.add(tf.layers.dropout({ rate: 0.2 }));
+  // model.add(tf.layers.dropout({ rate: 0.2 }));
   model.add(tf.layers.dense({ units: 32, activation: "relu" }));
   model.add(tf.layers.dense({ units: FEATURES.length }));
-  model.compile({ loss: "meanSquaredError", optimizer: tf.train.adam(0.01) });
-  await model.fit(xs, ys, { epochs: 100, verbose: 0 });
+  model.compile({ loss: "meanSquaredError", optimizer: tf.train.adam(0.001) });
+  await model.fit(xs, ys, { epochs: 200, verbose: 0 });
   const last = tf.tensor2d([featureVectors[featureVectors.length - 1]]);
   const prediction = model.predict(last) as tfTypes.Tensor;
   const values = Array.from(prediction.dataSync());
