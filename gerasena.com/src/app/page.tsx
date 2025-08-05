@@ -115,12 +115,12 @@ export default function Home() {
           >
             Histórico
           </Link>
-          <Link
+          {/* <Link
             href="/estatisticas"
             className="rounded bg-gray-600 px-4 py-2 text-white text-center hover:bg-gray-700"
           >
             Estatísticas
-          </Link>
+          </Link> */}
           <Link
             href="/arquivo"
             className="rounded bg-gray-600 px-4 py-2 text-white text-center hover:bg-gray-700"
