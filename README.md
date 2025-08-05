@@ -15,6 +15,17 @@ Gerasena.com é uma aplicação completa para geração e análise de jogos da M
   - Utiliza [libSQL/Turso](https://turso.tech/) para persistir sorteios (`history`) e jogos gerados (`gerador`).
   - Arquivo `public/mega-sena.csv` serve como fonte inicial para preencher o banco.
 
+## Parâmetros do algoritmo genético
+
+As páginas de geração (`/automatico` e `/manual`) e a API aceitam os
+parâmetros `populationSize` e `generations` para configurar o algoritmo.
+`populationSize` determina quantos jogos compõem a população inicial e
+`generations` define quantos ciclos de evolução serão executados. O tempo de
+execução cresce aproximadamente com `populationSize * generations`; valores
+muito altos (acima de ~500 indivíduos ou dezenas de gerações) podem tornar o
+processo lento, especialmente no navegador. Recomenda‑se limitar a população a
+no máximo 10 000 jogos e usar quantidades moderadas de gerações.
+
 ## Pipeline de dados
 
 - `npm run scrape:mega-sena` baixa do serviço da Caixa o CSV mais recente com os sorteios.

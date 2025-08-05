@@ -21,10 +21,16 @@ function ManualContent() {
   const searchParams = useSearchParams();
   const concursoParam = searchParams.get("concurso");
   const baseConcurso = concursoParam ? parseInt(concursoParam, 10) : undefined;
-  const qtdParam = searchParams.get("qtd");
-  const qtdGerar = qtdParam
-    ? Math.min(Math.max(parseInt(qtdParam, 10), 1), QTD_GERAR_MAX)
+  const populationParam = searchParams.get("populationSize") ?? searchParams.get("qtd");
+  const populationSize = populationParam
+    ? Math.min(Math.max(parseInt(populationParam, 10), 1), QTD_GERAR_MAX)
     : QTD_GERAR;
+  const generationsParam = searchParams.get("generations");
+  const generations = generationsParam
+    ? Math.max(parseInt(generationsParam, 10), 1)
+    : populationSize > 5000
+      ? 80
+      : 50;
   const seedParam = searchParams.get("seed") || "";
   const [seed, setSeed] = useState(seedParam);
   const mutationParam = searchParams.get("mutationRate") || "0.1";
@@ -56,14 +62,12 @@ function ManualContent() {
         histPos: [],
       };
       Object.assign(features, selected);
-      const generations = qtdGerar > 5000 ? 80 : 50;
-      const games = generateGames(
-        features,
-        qtdGerar,
+      const games = generateGames(features, {
+        populationSize,
         generations,
-        seed || undefined,
-        mutationRate
-      );
+        seed: seed || undefined,
+        mutationRate,
+      });
       const res = await fetch(
         `/api/historico?limit=${QTD_HIST}${
           baseConcurso ? `&before=${baseConcurso}` : ""

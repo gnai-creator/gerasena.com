@@ -199,14 +199,32 @@ function gameKey(game: number[]): string {
   return [...game].sort((a, b) => a - b).join(",");
 }
 
+export interface GenerateConfig {
+  populationSize?: number;
+  generations?: number;
+  seed?: string;
+  mutationRate?: number;
+  sumTolerance?: number;
+}
+
+/**
+ * Gera combinações utilizando um algoritmo genético.
+ * O tempo de execução cresce proporcionalmente a
+ * `populationSize * generations`, portanto valores muito altos
+ * (acima de ~500 indivíduos) podem tornar a função lenta.
+ */
 export function generateGames(
   _features: FeatureResult,
-  populationSize = 100,
-  generations = 50,
-  seed?: string,
-  mutationRate = 0.1,
-  sumTolerance = SUM_TOLERANCE
+  {
+    populationSize = 100,
+    generations = 50,
+    seed,
+    mutationRate = 0.1,
+    sumTolerance = SUM_TOLERANCE,
+  }: GenerateConfig = {}
 ): number[][] {
+  populationSize = Math.max(1, Math.floor(populationSize));
+  generations = Math.max(1, Math.floor(generations));
   const rng = seed ? seedrandom(seed) : Math.random;
 
   const allowed =
@@ -243,7 +261,7 @@ export function generateGames(
   const population: number[][] = [];
   const seen = new Set<string>();
   let attempts = 0;
-  const maxAttempts = populationSize * 10;
+  const maxAttempts = populationSize * 20;
   while (population.length < populationSize && attempts < maxAttempts) {
     attempts++;
     const game = randomGame(rng, allowed);
@@ -263,6 +281,7 @@ export function generateGames(
 
     const survivors: number[][] = [];
     const survivorKeys = new Set<string>();
+    const targetSurvivors = Math.ceil(populationSize / 2);
 
     for (const { p } of scored) {
       const key = gameKey(p);
@@ -270,11 +289,11 @@ export function generateGames(
         survivorKeys.add(key);
         survivors.push(p);
       }
-      if (survivors.length >= populationSize / 2) break;
+      if (survivors.length >= targetSurvivors) break;
     }
 
     let childAttempts = 0;
-    const maxChildAttempts = populationSize * 10;
+    const maxChildAttempts = populationSize * 20;
     while (
       survivors.length < populationSize &&
       childAttempts < maxChildAttempts
