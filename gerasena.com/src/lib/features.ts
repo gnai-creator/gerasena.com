@@ -152,11 +152,34 @@ export const FEATURE_MATRIX: Record<string, number[][]> = {
     [52, 54, 55, 56, 58, 60],
   ],
   ["three"]: [
-    [2, 4, 5, 6, 8, 10],
-    [12, 14, 15, 16, 18, 20],
-    [22, 24, 25, 26, 28, 30],
-    [32, 34, 35, 36, 38, 40],
-    [42, 44, 45, 46, 48, 50],
-    [52, 54, 55, 56, 58, 60],
+    [3, 4, 5, 7, 8, 10],
+    [13, 14, 15, 17, 18, 20],
+    [23, 24, 25, 27, 28, 30],
+    [33, 34, 35, 37, 38, 40],
+    [43, 44, 45, 47, 48, 50],
+    [53, 54, 55, 57, 58, 60],
   ],
 };
+
+export function selectMatrix(features: FeatureResult): {
+  key: string;
+  numbers: number[];
+} {
+  const sum = typeof features.sum === "number" ? features.sum : 0;
+  let selected = "one";
+  let bestDiff = Infinity;
+  for (const [key, matrix] of Object.entries(FEATURE_MATRIX)) {
+    const avgRowSum =
+      matrix.reduce((acc, row) => acc + row.reduce((a, b) => a + b, 0), 0) /
+      matrix.length;
+    const diff = Math.abs(avgRowSum - sum);
+    if (diff < bestDiff) {
+      bestDiff = diff;
+      selected = key;
+    }
+  }
+  const numbers = Array.from(new Set(FEATURE_MATRIX[selected].flat())).sort(
+    (a, b) => a - b
+  );
+  return { key: selected, numbers };
+}
