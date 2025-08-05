@@ -48,22 +48,22 @@ export default function Home() {
             min={1}
             max={QTD_GERAR_MAX}
           />
-        <input
+          <input
             type="number"
-            value={qtd}
+            value={mutation}
             onChange={(e) => {
               const val = e.target.value;
               if (!val) {
                 setMutation("");
               } else {
-                const num = Math.min(parseInt(val, 10), 1.0);
+                const num = Math.min(parseFloat(val), 1.0);
                 setMutation(num.toString());
               }
             }}
-            placeholder="Taxa de mutação (0.0 - 1.0)"
+            placeholder="Tx de mutação (0.0 - 1.0)"
             className="rounded border px-4 py-2 bg-black text-white"
-            min={0}
-            max={1}
+            min={0.0}
+            max={1.0}
           />
           <Link
             href={`/automatico${query ? `?${query}` : ""}`}
