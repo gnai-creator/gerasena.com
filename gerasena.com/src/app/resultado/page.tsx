@@ -42,17 +42,21 @@ export default function Resultado() {
       >
         Exportar TXT
       </button>
+      <br />
+      <Link
+        href="/"
+        className="rounded bg-green-600 px-4 py-2 text-white text-center hover:bg-green-700"
+      >
+        Voltar
+      </Link>
+      <br />
+      <br />
       <h2 className="mb-4 text-xl font-semibold">Resultados</h2>
       <div className="grid gap-4">
         {games.map((g, idx) => (
           <GameCard key={idx} numbers={g.numbers} score={g.score} />
         ))}
       </div>
-      <br />
-      <Link href="/"
-        className="rounded bg-green-600 px-4 py-2 text-white text-center hover:bg-green-700"
-
-      >Voltar</Link>
     </main>
   );
 }
