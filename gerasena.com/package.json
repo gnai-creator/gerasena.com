@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "node tests/crossover.test.js",
     "scrape:mega-sena": "ts-node scripts/mega-sena-cron.ts",
     "seed:turso": "node scripts/seed-turso.js",
     "seed:history": "node scripts/populate-history.js"
