@@ -48,18 +48,20 @@ export async function getCachedHistorico(
 }
 
 export async function getHistorico(
-
   limit = QTD_HIST,
   offset = 0,
   before?: number,
   desc = true
 ): Promise<Draw[]> {
   const allDraws = await loadHistorico();
-  let filtered = before !== undefined
-    ? allDraws.filter((d) => d.concurso < before)
-    : [...allDraws];
+  let filtered =
+    before !== undefined
+      ? allDraws.filter((d) => d.concurso < before)
+      : [...allDraws];
 
-  filtered.sort((a, b) => (desc ? b.concurso - a.concurso : a.concurso - b.concurso));
+  filtered.sort((a, b) =>
+    desc ? b.concurso - a.concurso : a.concurso - b.concurso
+  );
   return filtered.slice(offset, offset + limit);
 }
 
@@ -96,10 +98,8 @@ async function getHistoricoFromCsv(
   before?: number,
   desc = true
 ): Promise<Draw[]> {
-
   const csvPath = path.join(process.cwd(), "public", "mega-sena.csv");
   const fs = await import("fs/promises");
-
 
   const stats = await fs.stat(csvPath);
   if (!csvCache || stats.mtimeMs > csvCache.mtimeMs) {
@@ -131,7 +131,9 @@ async function getHistoricoFromCsv(
       ? csvCache.draws.filter((d) => d.concurso < before)
       : csvCache.draws.slice();
 
-  draws.sort((a, b) => (desc ? b.concurso - a.concurso : a.concurso - b.concurso));
+  draws.sort((a, b) =>
+    desc ? b.concurso - a.concurso : a.concurso - b.concurso
+  );
   return draws.slice(offset, offset + limit);
 }
 
@@ -356,15 +358,10 @@ export async function analyzeHistorico(
   );
 
   model.add(tf.layers.dense({ units: 64, activation: "relu" }));
-  model.add(tf.layers.dense({ units: 128, activation: "relu" }));
   model.add(tf.layers.dropout({ rate: 0.2 }));
-
-  model.add(tf.layers.dense({ units: 256, activation: "relu" }));
-
   model.add(tf.layers.dense({ units: 128, activation: "relu" }));
-  model.add(tf.layers.dropout({ rate: 0.2 }));
-
   model.add(tf.layers.dense({ units: 64, activation: "relu" }));
+  model.add(tf.layers.dropout({ rate: 0.2 }));
   model.add(tf.layers.dense({ units: 32, activation: "relu" }));
   model.add(tf.layers.dense({ units: FEATURES.length }));
   model.compile({ loss: "meanSquaredError", optimizer: tf.train.adam(0.01) });
