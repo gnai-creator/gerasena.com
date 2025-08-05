@@ -6,7 +6,7 @@ Gerasena.com é uma aplicação completa para geração e análise de jogos da M
 
 - **Geração de jogos**
   - **Manual:** o usuário escolhe características estatísticas (soma, média, frequência histórica etc.) e o sistema cria combinações a partir desses critérios.
-  - **Automática:** o módulo `analyzeHistorico` usa [TensorFlow.js](https://www.tensorflow.org/js) para analisar os últimos `QTD_HIST` sorteios (padrão 100) anteriores ao concurso informado (ou os últimos disponíveis) e gerar combinações automaticamente. O número do último concurso é obtido e passado como `before` tanto para a análise quanto para a consulta em `/api/historico`, evitando que o sorteio previsto participe do treinamento ou de comparações.
+  - **Automática:** o módulo `analyzeHistorico` usa [TensorFlow.js](https://www.tensorflow.org/js) para analisar os últimos `QTD_HIST` sorteios (padrão 200) anteriores ao concurso informado (ou os últimos disponíveis) e gerar combinações automaticamente. O treinamento agora utiliza uma semente fixa e validação interna para reduzir variação entre execuções. O número do último concurso é obtido e passado como `before` tanto para a análise quanto para a consulta em `/api/historico`, evitando que o sorteio previsto participe do treinamento ou de comparações.
   - As combinações são avaliadas (`evaluator.ts`) e salvas na tabela `gerador` do banco de dados.
 - **Consulta de resultados**
   - Página de **histórico** com os últimos concursos e possibilidade de paginação via `/api/historico`.

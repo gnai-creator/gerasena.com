@@ -1,9 +1,9 @@
 // src/lib/constants.ts
 // Constantes usadas no projeto Gerasena
 
-// Quantidade de jogos que serão analisados pela IA para prever as
-// características dos jogos passados.
-export const QTD_HIST = 50;
+// Quantidade de sorteios analisados para prever o próximo resultado.
+// Um histórico maior torna o modelo menos suscetível a oscilações.
+export const QTD_HIST = 200;
 
 // Quantidade de jogos a serem gerados pelo algoritmo genético.
 export const QTD_GERAR = 100;

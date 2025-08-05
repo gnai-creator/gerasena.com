@@ -2,7 +2,11 @@ import { db } from "./db";
 import { FEATURES /*, selectMatrix*/ } from "./features";
 import { QTD_HIST } from "./constants";
 import type * as tfTypes from "@tensorflow/tfjs";
+import seedrandom from "seedrandom";
 import path from "path";
+
+const RNG_SEED = Number(process.env.RNG_SEED) || 42;
+seedrandom(RNG_SEED.toString(), { global: true });
 
 /**
  * Simple in-memory cache for draw history.  Because this project runs in a
@@ -350,15 +354,40 @@ export async function analyzeHistorico(
       inputShape: [FEATURES.length],
       units: 32,
       activation: "relu",
+      kernelInitializer: tf.initializers.glorotUniform({ seed: RNG_SEED }),
     })
   );
-
-  model.add(tf.layers.dense({ units: 64, activation: "relu" }));
-  // model.add(tf.layers.dropout({ rate: 0.2 }));
-  model.add(tf.layers.dense({ units: 32, activation: "relu" }));
-  model.add(tf.layers.dense({ units: FEATURES.length }));
+  model.add(tf.layers.dropout({ rate: 0.2 }));
+  model.add(
+    tf.layers.dense({
+      units: 64,
+      activation: "relu",
+      kernelInitializer: tf.initializers.glorotUniform({ seed: RNG_SEED + 1 }),
+    })
+  );
+  model.add(tf.layers.dropout({ rate: 0.2 }));
+  model.add(
+    tf.layers.dense({
+      units: 32,
+      activation: "relu",
+      kernelInitializer: tf.initializers.glorotUniform({ seed: RNG_SEED + 2 }),
+    })
+  );
+  model.add(
+    tf.layers.dense({
+      units: FEATURES.length,
+      kernelInitializer: tf.initializers.glorotUniform({ seed: RNG_SEED + 3 }),
+    })
+  );
   model.compile({ loss: "meanSquaredError", optimizer: tf.train.adam(0.001) });
-  await model.fit(xs, ys, { epochs: 200, verbose: 0 });
+  const history = await model.fit(xs, ys, {
+    epochs: 200,
+    verbose: 0,
+    validationSplit: 0.2,
+    shuffle: true,
+  });
+  result.trainLoss = history.history.loss[history.history.loss.length - 1];
+  result.valLoss = history.history.val_loss[history.history.val_loss.length - 1];
   const last = tf.tensor2d([featureVectors[featureVectors.length - 1]]);
   const prediction = model.predict(last) as tfTypes.Tensor;
   const values = Array.from(prediction.dataSync());
