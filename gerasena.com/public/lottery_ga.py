@@ -29,9 +29,10 @@ If not provided, a random target is generated for demonstration purposes.
 
 from __future__ import annotations
 
+import argparse
 import json
+import os
 import random
-import sys
 from dataclasses import dataclass
 from typing import Dict, List, Sequence, Tuple
 
@@ -244,9 +245,17 @@ def random_historical_data() -> HistoricalData:
     return HistoricalData(freq=freq, prev_draw=prev_draw, position=position)
 
 def main():
+    parser = argparse.ArgumentParser(description="Lottery GA")
+    parser.add_argument("target", nargs="?", help="JSON file with target features")
+    parser.add_argument("--seed", type=int, default=int(os.environ.get("LOTTERY_SEED", 42)))
+    args = parser.parse_args()
+
+    random.seed(args.seed)
+    np.random.seed(args.seed)
+
     hist = random_historical_data()
-    if len(sys.argv) > 1:
-        desired = load_target_features(sys.argv[1])
+    if args.target:
+        desired = load_target_features(args.target)
     else:
         # Generate a random target for demonstration
         sample_game = tuple(sorted(random.sample(range(1, 61), 6)))
