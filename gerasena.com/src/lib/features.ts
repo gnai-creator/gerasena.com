@@ -1,5 +1,5 @@
-import type { FeatureResult } from "./historico";
-import { computeFeatures } from "./genetic";
+// import type { FeatureResult } from "./historico";
+// import { computeFeatures } from "./genetic";
 
 export const FEATURES = [
   "sum",
@@ -137,76 +137,76 @@ export const FEATURE_INFO: Record<
   },
 };
 
-export const FEATURE_MATRIX: Record<string, number[][]> = {
-  ["one"]: [
-    [1, 2, 3, 6, 7, 9],
-    [11, 12, 13, 16, 17, 19],
-    [21, 22, 23, 26, 27, 29],
-    [31, 32, 33, 36, 37, 39],
-    [41, 42, 43, 46, 47, 49],
-    [51, 52, 53, 56, 57, 59],
-  ],
-  ["two"]: [
-    [2, 4, 5, 6, 8, 10],
-    [12, 14, 15, 16, 18, 20],
-    [22, 24, 25, 26, 28, 30],
-    [32, 34, 35, 36, 38, 40],
-    [42, 44, 45, 46, 48, 50],
-    [52, 54, 55, 56, 58, 60],
-  ],
-  ["three"]: [
-    [3, 4, 5, 7, 8, 10],
-    [13, 14, 15, 17, 18, 20],
-    [23, 24, 25, 27, 28, 30],
-    [33, 34, 35, 37, 38, 40],
-    [43, 44, 45, 47, 48, 50],
-    [53, 54, 55, 57, 58, 60],
-  ],
-};
+// export const FEATURE_MATRIX: Record<string, number[][]> = {
+//   ["one"]: [
+//     [1, 2, 3, 6, 7, 9],
+//     [11, 12, 13, 16, 17, 19],
+//     [21, 22, 23, 26, 27, 29],
+//     [31, 32, 33, 36, 37, 39],
+//     [41, 42, 43, 46, 47, 49],
+//     [51, 52, 53, 56, 57, 59],
+//   ],
+//   ["two"]: [
+//     [2, 4, 5, 6, 8, 10],
+//     [12, 14, 15, 16, 18, 20],
+//     [22, 24, 25, 26, 28, 30],
+//     [32, 34, 35, 36, 38, 40],
+//     [42, 44, 45, 46, 48, 50],
+//     [52, 54, 55, 56, 58, 60],
+//   ],
+//   ["three"]: [
+//     [3, 4, 5, 7, 8, 10],
+//     [13, 14, 15, 17, 18, 20],
+//     [23, 24, 25, 27, 28, 30],
+//     [33, 34, 35, 37, 38, 40],
+//     [43, 44, 45, 47, 48, 50],
+//     [53, 54, 55, 57, 58, 60],
+//   ],
+// };
 
-export function selectMatrix(
-  features: FeatureResult
-): { key: string; numbers: number[] } {
-  let selected = "one";
-  let bestError = Infinity;
+// export function selectMatrix(
+//   features: FeatureResult
+// ): { key: string; numbers: number[] } {
+//   let selected = "one";
+//   let bestError = Infinity;
 
-  for (const [key, matrix] of Object.entries(FEATURE_MATRIX)) {
-    const agg: Record<string, number> = {};
-    for (const f of FEATURES) agg[f] = 0;
+//   for (const [key, matrix] of Object.entries(FEATURE_MATRIX)) {
+//    const agg: Record<string, number> = {};
+//    for (const f of FEATURES) agg[f] = 0;
 
-    for (const row of matrix) {
-      const rowFeatures = computeFeatures(
-        row,
-        features.histFreq,
-        features.prevDraw,
-        features.histPos
-      );
-      for (const f of FEATURES) {
-        agg[f] += rowFeatures[f] || 0;
-      }
-    }
+//    for (const row of matrix) {
+//      const rowFeatures = computeFeatures(
+//        row,
+//        features.histFreq,
+//        features.prevDraw,
+//        features.histPos
+//      );
+//      for (const f of FEATURES) {
+//        agg[f] += rowFeatures[f] || 0;
+//      }
+//    }
 
-    for (const f of FEATURES) {
-      agg[f] /= matrix.length;
-    }
+//    for (const f of FEATURES) {
+//      agg[f] /= matrix.length;
+//    }
 
-    let error = 0;
-    for (const f of FEATURES) {
-      const target = features[f];
-      if (typeof target === "number") {
-        const diff = agg[f] - target;
-        error += diff * diff;
-      }
-    }
+//    let error = 0;
+//    for (const f of FEATURES) {
+//      const target = features[f];
+//      if (typeof target === "number") {
+//        const diff = agg[f] - target;
+//        error += diff * diff;
+//      }
+//    }
 
-    if (error < bestError) {
-      bestError = error;
-      selected = key;
-    }
-  }
+//    if (error < bestError) {
+//      bestError = error;
+//      selected = key;
+//    }
+//  }
 
-  const numbers = Array.from(new Set(FEATURE_MATRIX[selected].flat())).sort(
-    (a, b) => a - b
-  );
-  return { key: selected, numbers };
-}
+//  const numbers = Array.from(new Set(FEATURE_MATRIX[selected].flat())).sort(
+//    (a, b) => a - b
+//  );
+//  return { key: selected, numbers };
+// }
