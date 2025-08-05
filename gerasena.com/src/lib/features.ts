@@ -69,8 +69,7 @@ export const FEATURE_INFO: Record<
   },
   quadrant_counts: {
     label: "Quadrantes",
-    description:
-      "Distribuição dos números pelos quadrantes do volante.",
+    description: "Distribuição dos números pelos quadrantes do volante.",
   },
   sequences: {
     label: "Sequências",
@@ -133,4 +132,31 @@ export const FEATURE_INFO: Record<
     description:
       "Diferença entre a média de frequência dos números quentes e frios, com base no histórico.",
   },
+};
+
+export const FEATURE_MATRIX: Record<string, number[][]> = {
+  ["one"]: [
+    [1, 2, 3, 6, 7, 9],
+    [11, 12, 13, 16, 17, 19],
+    [21, 22, 23, 26, 27, 29],
+    [31, 32, 33, 36, 37, 39],
+    [41, 42, 43, 46, 47, 49],
+    [51, 52, 53, 56, 57, 59],
+  ],
+  ["two"]: [
+    [2, 4, 5, 6, 8, 10],
+    [12, 14, 15, 16, 18, 20],
+    [22, 24, 25, 26, 28, 30],
+    [32, 34, 35, 36, 38, 40],
+    [42, 44, 45, 46, 48, 50],
+    [52, 54, 55, 56, 58, 60],
+  ],
+  ["three"]: [
+    [2, 4, 5, 6, 8, 10],
+    [12, 14, 15, 16, 18, 20],
+    [22, 24, 25, 26, 28, 30],
+    [32, 34, 35, 36, 38, 40],
+    [42, 44, 45, 46, 48, 50],
+    [52, 54, 55, 56, 58, 60],
+  ],
 };
