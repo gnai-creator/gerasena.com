@@ -25,27 +25,32 @@ function uniqueGame(nums: number[]): number[] {
     .slice(0, 6);
 }
 
-function randomGame(rng: () => number): number[] {
+function randomGame(rng: () => number, allowed: number[]): number[] {
   const set = new Set<number>();
   while (set.size < 6) {
-    set.add(rand(rng, 1, 60));
+    set.add(allowed[rand(rng, 0, allowed.length - 1)]);
   }
   return uniqueGame(Array.from(set));
 }
 
-function crossover(rng: () => number, a: number[], b: number[]): number[] {
+function crossover(
+  rng: () => number,
+  a: number[],
+  b: number[],
+  allowed: number[]
+): number[] {
   const set = new Set([...a.slice(0, 3), ...b.slice(3)]);
   while (set.size < 6) {
-    set.add(rand(rng, 1, 60));
+    set.add(allowed[rand(rng, 0, allowed.length - 1)]);
   }
   return uniqueGame(Array.from(set));
 }
 
-function mutate(rng: () => number, game: number[]) {
+function mutate(rng: () => number, game: number[], allowed: number[]) {
   if (rng() < 0.1) {
     const idx = rand(rng, 0, 5);
-    let n = rand(rng, 1, 60);
-    while (game.includes(n)) n = rand(rng, 1, 60);
+    let n = allowed[rand(rng, 0, allowed.length - 1)];
+    while (game.includes(n)) n = allowed[rand(rng, 0, allowed.length - 1)];
     game[idx] = n;
     const unique = uniqueGame(game);
     game.splice(0, game.length, ...unique);
@@ -216,6 +221,12 @@ export function generateGames(
 ): number[][] {
   const rng = seed ? seedrandom(seed) : Math.random;
 
+  const allowed =
+    Array.isArray(_features.allowedNumbers) &&
+    _features.allowedNumbers.length > 0
+      ? _features.allowedNumbers
+      : Array.from({ length: 60 }, (_, i) => i + 1);
+
   let sumRange: [number, number] | null = null;
   if (Array.isArray(_features.sumRange)) {
     sumRange = [
@@ -247,7 +258,7 @@ export function generateGames(
   const maxAttempts = populationSize * 10;
   while (population.length < populationSize && attempts < maxAttempts) {
     attempts++;
-    const game = randomGame(rng);
+    const game = randomGame(rng, allowed);
     const sum = game.reduce((a, b) => a + b, 0);
     if (sumRange && (sum < sumRange[0] || sum > sumRange[1])) continue;
     const key = gameKey(game);
@@ -284,8 +295,8 @@ export function generateGames(
       if (survivors.length === 0) break;
       const a = survivors[rand(rng, 0, survivors.length - 1)];
       const b = survivors[rand(rng, 0, survivors.length - 1)];
-      const child = crossover(rng, a, b);
-      mutate(rng, child);
+      const child = crossover(rng, a, b, allowed);
+      mutate(rng, child, allowed);
       const sum = child.reduce((acc, n) => acc + n, 0);
       if (sumRange && (sum < sumRange[0] || sum > sumRange[1])) continue;
       const key = gameKey(child);

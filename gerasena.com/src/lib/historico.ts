@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { FEATURES } from "./features";
+import { FEATURES, selectMatrix } from "./features";
 import { QTD_HIST } from "./constants";
 import type * as tfTypes from "@tensorflow/tfjs";
 import path from "path";
@@ -294,7 +294,9 @@ export interface FeatureResult {
   histPos: number[];
   /** Historical min/max range for draw sums */
   sumRange?: [number, number];
-  [key: string]: number | [number, number] | number[] | undefined;
+  matrixKey?: string;
+  allowedNumbers?: number[];
+  [key: string]: number | string | [number, number] | number[] | undefined;
 }
 
 export async function analyzeHistorico(
@@ -382,6 +384,10 @@ export async function analyzeHistorico(
   result.histFreq = freq;
   result.prevDraw = prevDraw;
   result.histPos = histPos;
+
+  const { key, numbers } = selectMatrix(result);
+  result.matrixKey = key;
+  result.allowedNumbers = numbers;
 
   model.dispose();
   tf.dispose([xs, ys, last, prediction]);
