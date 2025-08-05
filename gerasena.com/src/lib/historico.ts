@@ -386,8 +386,12 @@ export async function analyzeHistorico(
     validationSplit: 0.2,
     shuffle: true,
   });
-  result.trainLoss = history.history.loss[history.history.loss.length - 1];
-  result.valLoss = history.history.val_loss[history.history.val_loss.length - 1];
+  const toNumber = (v: number | tfTypes.Scalar) =>
+    typeof v === "number" ? v : v.dataSync()[0];
+  const trainLosses = history.history.loss as Array<number | tfTypes.Scalar>;
+  const valLosses = history.history.val_loss as Array<number | tfTypes.Scalar>;
+  result.trainLoss = toNumber(trainLosses[trainLosses.length - 1]);
+  result.valLoss = toNumber(valLosses[valLosses.length - 1]);
   const last = tf.tensor2d([featureVectors[featureVectors.length - 1]]);
   const prediction = model.predict(last) as tfTypes.Tensor;
   const values = Array.from(prediction.dataSync());
