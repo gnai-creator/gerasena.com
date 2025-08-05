@@ -86,6 +86,13 @@ function ManualContent() {
           body: JSON.stringify({ numbers: g.numbers }),
         });
       });
+      const targetConcurso =
+        baseConcurso !== undefined ? baseConcurso : draws[0].concurso + 1;
+      sessionStorage.setItem("concurso", String(targetConcurso));
+      sessionStorage.setItem(
+        "concursoDate",
+        new Date().toISOString().slice(0, 10)
+      );
       sessionStorage.setItem("results", JSON.stringify(evaluated));
       router.push("/resultado");
     }
