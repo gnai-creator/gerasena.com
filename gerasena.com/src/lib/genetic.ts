@@ -46,8 +46,13 @@ function crossover(
   return uniqueGame(Array.from(set));
 }
 
-function mutate(rng: () => number, game: number[], allowed: number[]) {
-  if (rng() < 0.1) {
+function mutate(
+  rng: () => number,
+  game: number[],
+  allowed: number[],
+  mutationRate: number
+) {
+  if (rng() < mutationRate) {
     const idx = rand(rng, 0, 5);
     let n = allowed[rand(rng, 0, allowed.length - 1)];
     while (game.includes(n)) n = allowed[rand(rng, 0, allowed.length - 1)];
@@ -197,6 +202,7 @@ export function generateGames(
   populationSize = 100,
   generations = 50,
   seed?: string,
+  mutationRate = 0.1,
   sumTolerance = SUM_TOLERANCE
 ): number[][] {
   const rng = seed ? seedrandom(seed) : Math.random;
@@ -276,7 +282,7 @@ export function generateGames(
       const a = survivors[rand(rng, 0, survivors.length - 1)];
       const b = survivors[rand(rng, 0, survivors.length - 1)];
       const child = crossover(rng, a, b, allowed);
-      mutate(rng, child, allowed);
+      mutate(rng, child, allowed, mutationRate);
       const sum = child.reduce((acc, n) => acc + n, 0);
       if (sumRange && (sum < sumRange[0] || sum > sumRange[1])) continue;
       const key = gameKey(child);
