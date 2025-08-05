@@ -15,6 +15,8 @@ function AutomaticoContent() {
     ? Math.min(Math.max(parseInt(qtdParam, 10), 1), QTD_GERAR_MAX)
     : QTD_GERAR;
   const seed = searchParams.get("seed") || undefined;
+  const mutationParam = searchParams.get("mutationRate");
+  const mutationRate = mutationParam ? parseFloat(mutationParam) : 0.1;
 
   useEffect(() => {
     async function run() {
@@ -31,7 +33,13 @@ function AutomaticoContent() {
       const featuresRes = await fetch(`/api/analyze?before=${before}`);
       const features: FeatureResult = await featuresRes.json();
       const generations = qtdGerar > 5000 ? 80 : 50;
-      const games = generateGames(features, qtdGerar, generations, seed);
+      const games = generateGames(
+        features,
+        qtdGerar,
+        generations,
+        seed,
+        mutationRate
+      );
       const res = await fetch(
         `/api/historico?limit=${QTD_HIST}&before=${before}`
       );
@@ -61,7 +69,7 @@ function AutomaticoContent() {
       router.push("/resultado");
     }
     run();
-  }, [router, baseConcurso, qtdGerar, seed]);
+  }, [router, baseConcurso, qtdGerar, seed, mutationRate]);
 
   return (
     <main className="flex min-h-screen items-center justify-center">
