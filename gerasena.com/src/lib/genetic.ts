@@ -57,7 +57,7 @@ function mutate(rng: () => number, game: number[], allowed: number[]) {
   }
 }
 
-function computeFeatures(
+export function computeFeatures(
   game: number[],
   histFreq: number[],
   prevDraw: number[],

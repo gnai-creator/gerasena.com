@@ -1,4 +1,5 @@
 import type { FeatureResult } from "./historico";
+import { computeFeatures } from "./genetic";
 
 export const FEATURES = [
   "sum",
@@ -166,21 +167,44 @@ export const FEATURE_MATRIX: Record<string, number[][]> = {
 export function selectMatrix(
   features: FeatureResult
 ): { key: string; numbers: number[] } {
-  const sum = typeof features.sum === "number" ? features.sum : 0;
   let selected = "one";
-  let bestDiff = Infinity;
+  let bestError = Infinity;
+
   for (const [key, matrix] of Object.entries(FEATURE_MATRIX)) {
-    const avgRowSum =
-      matrix.reduce(
-        (acc, row) => acc + row.reduce((a, b) => a + b, 0),
-        0
-      ) / matrix.length;
-    const diff = Math.abs(avgRowSum - sum);
-    if (diff < bestDiff) {
-      bestDiff = diff;
+    const agg: Record<string, number> = {};
+    for (const f of FEATURES) agg[f] = 0;
+
+    for (const row of matrix) {
+      const rowFeatures = computeFeatures(
+        row,
+        features.histFreq,
+        features.prevDraw,
+        features.histPos
+      );
+      for (const f of FEATURES) {
+        agg[f] += rowFeatures[f] || 0;
+      }
+    }
+
+    for (const f of FEATURES) {
+      agg[f] /= matrix.length;
+    }
+
+    let error = 0;
+    for (const f of FEATURES) {
+      const target = features[f];
+      if (typeof target === "number") {
+        const diff = agg[f] - target;
+        error += diff * diff;
+      }
+    }
+
+    if (error < bestError) {
+      bestError = error;
       selected = key;
     }
   }
+
   const numbers = Array.from(new Set(FEATURE_MATRIX[selected].flat())).sort(
     (a, b) => a - b
   );
